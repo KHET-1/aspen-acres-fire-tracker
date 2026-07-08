@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="Live map, evacuation status, wind and resources for the Aspen Acres Fire in Southern Colorado. Mobile-friendly community tracker." />
+  <title>Aspen Acres Fire — Southern Colorado Community Tracker</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script>
+
+  <style>
+    [data-theme="dawn"]{
+      --bg:#EFEBE2; --panel:#F8F5EE; --panel2:#E6E0D3; --line:#CDC5B4; --ink:#242B29; --ink-dim:#48524E; --ink-faint:#6C766F;
+      --fire:#B8471F; --fire-soft:#D97748; --contain:#1D6B5C; --warn:#7A5A0E; --evac:#A8231C; --evac-bg:#F3DCD9; --pre-bg:#F0E6CC;
+      --ok:#1E6B3C; --ok-bg:#DDEBDD; --link:#14588F; --shadow:0 1px 3px rgba(60,50,30,.12); --chipline:rgba(0,0,0,.15);
+    }
+    [data-theme="dusk"]{
+      --bg:#21272C; --panel:#2B3238; --panel2:#353D44; --line:#48525B; --ink:#F1EFE9; --ink-dim:#C6CAC7; --ink-faint:#9AA29F;
+      --fire:#FF9457; --fire-soft:#E0451F; --contain:#5FCDB8; --warn:#F2C14E; --evac:#FF847B; --evac-bg:#4A2825; --pre-bg:#453A1E;
+      --ok:#7FD99B; --ok-bg:#233A2C; --link:#93C8F2; --shadow:0 1px 4px rgba(0,0,0,.35); --chipline:rgba(255,255,255,.16);
+    }
+    :root{ --radius:14px; }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html{ scroll-behavior:smooth; font-size:18px; }
+    html.fs-lg{ font-size:20px; }
+    html.fs-xl{ font-size:22px; }
+    body{
+      background:var(--bg); color:var(--ink);
+      font-family:"Atkinson Hyperlegible",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      font-size:1rem; line-height:1.6; transition:background .25s,color .25s;
+    }
+    a{ color:var(--link); text-underline-offset:3px; }
+    .wrap{ max-width:1100px; margin:0 auto; padding:0 16px; }
+    :focus-visible{ outline:3px solid var(--contain); outline-offset:2px; border-radius:4px; }
+    @media (prefers-reduced-motion:reduce){ *{ transition:none!important; animation:none!important; } html{ scroll-behavior:auto; } }
+
+    header{ border-bottom:1px solid var(--line); padding:20px 0 16px; background:var(--panel); }
+    .topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+    .kicker{ letter-spacing:.16em; font-size:.72rem; font-weight:700; color:var(--fire); text-transform:uppercase; }
+    h1{ font-size:clamp(1.7rem,5vw,2.5rem); line-height:1.08; font-weight:700; margin:4px 0 6px; }
+    .sub{ color:var(--ink-dim); font-size:.95rem; max-width:640px; }
+    .ctrls{ display:flex; gap:8px; align-items:center; }
+    .ctrl{
+      background:var(--panel2); border:1px solid var(--line); color:var(--ink); border-radius:10px; font-family:inherit;
+      font-size:.9rem; font-weight:700; padding:10px 14px; cursor:pointer; min-height:44px; box-shadow:var(--shadow);
+    }
+    .ctrl:hover{ border-color:var(--ink-faint); }
+    .stamp{ display:inline-block; margin-top:8px; padding:5px 12px; border:1px solid var(--line); border-radius:999px; font-size:.78rem; color:var(--warn); background:var(--panel2); }
+    .livechip{ display:inline-block; margin-top:8px; margin-left:6px; padding:5px 12px; border-radius:999px; font-size:.78rem; background:var(--ok-bg); color:var(--ok); border:1px solid var(--chipline); }
+    .livechip .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--ok); margin-right:6px; animation:pulse 1.6s infinite; }
+    @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    nav{ position:sticky; top:0; z-index:1000; background:var(--panel); border-bottom:2px solid var(--line); box-shadow:var(--shadow); }
+    nav .wrap{ display:flex; gap:2px; overflow-x:auto; padding:6px 16px; -webkit-overflow-scrolling:touch; }
+    nav a{
+      white-space:nowrap; color:var(--ink-dim); text-decoration:none; font-size:.86rem; font-weight:700;
+      padding:11px 14px; border-radius:9px; min-height:44px; display:flex; align-items:center;
+    }
+    nav a:hover, nav a:focus{ background:var(--panel2); color:var(--ink); }
+
+    section{ padding:28px 0 8px; }
+    h2{ font-size:1.35rem; font-weight:700; margin-bottom:4px; }
+    .h2sub{ color:var(--ink-faint); font-size:.88rem; margin-bottom:14px; max-width:720px; }
+
+    .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:10px; margin:14px 0 4px; }
+    .stat{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; box-shadow:var(--shadow); }
+    .stat .n{ font-size:1.5rem; font-weight:700; letter-spacing:-.01em; }
+    .stat .l{ font-size:.7rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.07em; margin-top:2px; font-weight:700; }
+    .stat.fire .n{ color:var(--fire); } .stat.contain .n{ color:var(--contain); } .stat.evac .n{ color:var(--evac); }
+
+    #map{ height:58vh; min-height:380px; border-radius:var(--radius); border:2px solid var(--line); background:var(--panel2); box-shadow:var(--shadow); display:block; }
+    #map-fallback{ display:none; border-radius:var(--radius); border:2px solid var(--line); box-shadow:var(--shadow); overflow:hidden; margin-top:12px; }
+    #map-fallback img{ width:100%; height:auto; display:block; }
+    .mapbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
+    .toggle{
+      display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line); border-radius:999px;
+      padding:9px 15px; font-size:.85rem; font-weight:700; cursor:pointer; user-select:none; color:var(--ink-dim); min-height:44px; box-shadow:var(--shadow);
+    }
+    .toggle input{ accent-color:var(--fire); width:18px; height:18px; cursor:pointer; }
+    .toggle.on{ color:var(--ink); border-color:var(--ink-faint); }
+    .mapbtns{ display:flex; gap:8px; margin-left:auto; }
+
+    .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px 18px; margin-top:10px; box-shadow:var(--shadow); }
+    .timeline label{ font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700; }
+    .timeline .tl-date{ font-size:1.05rem; font-weight:700; color:var(--fire); margin:2px 0 6px; }
+    .timeline input[type=range]{ width:100%; accent-color:var(--fire); height:34px; cursor:pointer; }
+    .tl-ticks{ display:flex; justify-content:space-between; font-size:.7rem; color:var(--ink-faint); margin-top:2px; font-weight:700; }
+    .legend{ display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:.8rem; color:var(--ink-dim); font-weight:600; }
+    .legend span{ display:flex; align-items:center; gap:6px; }
+    .sw{ width:15px; height:15px; border-radius:4px; display:inline-block; border:1px solid var(--chipline); }
+    .note{ font-size:.8rem; color:var(--ink-faint); margin-top:8px; }
+
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width:760px){ .grid2{ grid-template-columns:1fr; } }
+    .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; margin-bottom:12px; box-shadow:var(--shadow); }
+    .card h3{ font-size:.98rem; font-weight:700; margin-bottom:8px; }
+
+    .chip{ display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; border:1px solid var(--chipline); }
+    .chip.order{ background:var(--evac-bg); color:var(--evac); }
+    .chip.pre{ background:var(--pre-bg); color:var(--warn); }
+    .chip.down{ background:var(--ok-bg); color:var(--ok); }
+
+    table{ width:100%; border-collapse:collapse; font-size:.88rem; }
+    th{ text-align:left; font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); padding:7px 9px; border-bottom:2px solid var(--line); }
+    td{ padding:10px 9px; border-bottom:1px solid var(--line); vertical-align:top; }
+    tr:last-child td{ border-bottom:none; }
+    #evacTable tbody tr{ cursor:pointer; }
+    #evacTable tbody tr:hover, #evacTable tbody tr:focus-visible{ background:var(--panel2); }
+    .rowhint{ font-size:.7rem; color:var(--link); font-weight:700; }
+
+    .big-cta{ display:block; background:var(--fire-soft); color:#fff; text-decoration:none; text-align:center; font-size:.98rem; font-weight:700; padding:15px; border-radius:var(--radius); margin:8px 0; box-shadow:var(--shadow); }
+    [data-theme="dawn"] .big-cta{ background:var(--fire); }
+    .cta2{
+      display:block; background:var(--panel2); border:1px solid var(--line); color:var(--ink); text-decoration:none;
+      text-align:center; font-size:.9rem; font-weight:700; padding:13px; border-radius:var(--radius); margin:7px 0; box-shadow:var(--shadow);
+    }
+    .cta2:hover{ border-color:var(--ink-faint); }
+
+    .loading{ color:var(--ink-faint); font-style:italic; font-size:.82rem; }
+
+    #feedList{ display:flex; flex-direction:column; gap:8px; }
+    .feed-item{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:13px 16px; box-shadow:var(--shadow); }
+    .feed-item .fi-top{ display:flex; gap:6px; align-items:baseline; flex-wrap:wrap; margin-bottom:4px; }
+    .feed-item .fi-src{ font-weight:700; font-size:.88rem; }
+    .feed-item .fi-handle{ color:var(--ink-faint); font-size:.78rem; }
+    .feed-item .fi-time{ color:var(--ink-faint); font-size:.76rem; margin-left:auto; }
+    .feed-item .fi-text{ font-size:.9rem; color:var(--ink-dim); }
+    .feed-item.verified{ border-left:5px solid var(--contain); }
+    .feed-empty{ border:2px dashed var(--line); border-radius:var(--radius); padding:20px; text-align:center; color:var(--ink-faint); font-size:.86rem; }
+
+    ul.clean{ list-style:none; }
+    ul.clean li{ padding:6px 0 6px 24px; position:relative; font-size:.88rem; color:var(--ink-dim); }
+    ul.clean li::before{ content:""; position:absolute; left:6px; top:15px; width:7px; height:7px; border-radius:50%; background:var(--fire); }
+    ul.clean li b{ color:var(--ink); }
+    ul.check li::before{ content:"✓"; background:none; color:var(--contain); font-weight:700; top:6px; left:2px; width:auto; height:auto; }
+
+    input[type=text]{ font-family:inherit; }
+    footer{ border-top:1px solid var(--line); margin-top:32px; padding:22px 0 40px; color:var(--ink-faint); font-size:.78rem; background:var(--panel); }
+    footer p{ margin-bottom:6px; }
+    .disc{ background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); padding:13px 15px; margin-bottom:14px; font-size:.82rem; color:var(--ink-dim); }
+    .share{ background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; margin-top:12px; }
+    .share h3{ margin-bottom:5px; }
+    .share p{ font-size:.86rem; color:var(--ink-dim); }
+
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip{ background:var(--panel); color:var(--ink); }
+    .leaflet-popup-content{ font-size:.82rem; line-height:1.45; font-family:"Atkinson Hyperlegible",sans-serif; }
+    .leaflet-container a{ color:var(--link); }
+
+    @media (max-width: 600px){
+      html{ font-size:17px; }
+      h1{ font-size:1.9rem; }
+      #map{ height:52vh; min-height:320px; }
+      .stats{ grid-template-columns:repeat(2,1fr); }
+      .grid2{ grid-template-columns:1fr; }
+      nav a{ padding:10px 12px; font-size:.82rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div>
+          <div class="kicker">Southern Colorado · Pueblo · Custer · Fremont · Huerfano</div>
+          <h1>Aspen Acres Fire</h1>
+          <div class="sub">Community tracker for the largest active wildfire in Colorado — burning in the Wet Mountains west of I-25.</div>
+        </div>
+        <div class="ctrls" role="group" aria-label="Display settings">
+          <button class="ctrl" id="themeBtn" aria-label="Switch theme">☀️ Light</button>
+          <button class="ctrl" id="fsBtn" aria-label="Text size">A<span style="font-size:1.15em">A</span></button>
+        </div>
+      </div>
+      <span class="stamp">Community version • July 7, 2026 • Updated live</span>
+      <span class="livechip" id="liveChip"><span class="dot"></span>Fetching live data…</span>
+    </div>
+  </header>
+
+  <nav aria-label="Quick navigation">
+    <div class="wrap">
+      <a href="#map-sec">Map</a>
+      <a href="#check">Check Address</a>
+      <a href="#evac">Evacuations</a>
+      <a href="#feed-sec">Updates</a>
+      <a href="#weather">Weather</a>
+      <a href="#help">Shelters</a>
+      <a href="#prep">Be Ready</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="stats" id="stats">
+      <div class="stat fire"><div class="n" data-stat="acres">93,916</div><div class="l">Acres burned</div></div>
+      <div class="stat contain"><div class="n" data-stat="contain">16%</div><div class="l">Contained</div></div>
+      <div class="stat"><div class="n" data-stat="personnel">1,300+</div><div class="l">Personnel</div></div>
+      <div class="stat evac"><div class="n" data-stat="evacuated">~11,000</div><div class="l">Evacuated</div></div>
+      <div class="stat"><div class="n" data-stat="homes">263+</div><div class="l">Homes lost</div></div>
+      <div class="stat"><div class="n" data-stat="deaths">0</div><div class="l">Deaths</div></div>
+    </div>
+  </div>
+
+  <section id="map-sec">
+    <div class="wrap">
+      <h2>Fire Map &amp; Zones</h2>
+      <div class="h2sub">Red outline = official perimeter reference. Tap zones or table rows. If interactive map fails, a static fallback appears.</div>
+
+      <div id="map" role="application" aria-label="Interactive Leaflet map of Aspen Acres Fire"></div>
+
+      <div id="map-fallback">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200" alt="Static map fallback placeholder for Aspen Acres Fire area" />
+        <p class="note" style="text-align:center;margin:8px;">Static fallback shown. For official live evacuation boundaries, open Watch Duty.</p>
+      </div>
+
+      <div class="mapbar" id="toggles">
+        <label class="toggle on"><input type="checkbox" checked data-layer="live" /> Live perimeter</label>
+        <label class="toggle on"><input type="checkbox" checked data-layer="zones" /> Evac zones</label>
+        <label class="toggle on"><input type="checkbox" checked data-layer="towns" /> Towns</label>
+        <span class="mapbtns">
+          <button class="ctrl" id="recenterBtn" type="button">⌖ Recenter</button>
+          <button class="ctrl" id="locateBtn" type="button">📍 My location</button>
+        </span>
+      </div>
+
+      <div class="timeline">
+        <label for="tl">Fire growth timeline — drag to scrub history</label>
+        <div class="tl-date" id="tlDate"></div>
+        <input type="range" id="tl" min="0" max="4" value="4" step="1" aria-label="Fire progression" />
+        <div class="tl-ticks"><span>Jun 29</span><span>Jul 1</span><span>Jul 3</span><span>Jul 5</span><span>Jul 7</span></div>
+      </div>
+
+      <div class="legend">
+        <span><span class="sw" style="background:none;border:3px solid #E0451F"></span> Live perimeter</span>
+        <span><span class="sw" style="background:#C0392B;opacity:.55"></span> Evac order</span>
+        <span><span class="sw" style="background:#D9A62E;opacity:.6"></span> Pre-evac</span>
+        <span><span class="sw" style="background:#3A9160;opacity:.6"></span> Downgraded</span>
+      </div>
+      <p class="note">Zones are schematic for quick reference. For parcel-level boundaries, verify with official county maps or Watch Duty.</p>
+
+      <a class="big-cta" href="https://app.watchduty.org" target="_blank" rel="noopener">Open Watch Duty — live official zones &amp; alerts →</a>
+      <a class="cta2" href="https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire" target="_blank" rel="noopener">Official InciWeb page</a>
+    </div>
+  </section>
+
+  <section id="check">
+    <div class="wrap">
+      <h2>Check Your Address</h2>
+      <div class="h2sub">Type any address. It pins the location and shows distance guidance. Always verify evacuation zone in Watch Duty.</div>
+      <div class="card">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="addrIn" type="text" inputmode="text" autocomplete="street-address" placeholder="e.g. 1312 W 3rd St, Florence, CO" aria-label="Address to check" style="flex:1;min-width:220px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:1rem;padding:14px 16px" />
+          <button id="addrBtn" class="ctrl" type="button" style="background:var(--fire);color:#fff;border:none;font-size:.95rem;padding:14px 22px">Check location</button>
+        </div>
+        <div id="addrOut" style="margin-top:12px"></div>
+        <p class="note" style="margin-top:10px"><b style="color:var(--warn)">Important:</b> This shows location guidance only. It does <b>not</b> replace sheriff evacuation orders.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="evac">
+    <div class="wrap">
+      <h2>Evacuation Status by Area</h2>
+      <div class="h2sub">Tap any row to focus the map. Orders can change quickly.</div>
+      <div class="card" style="overflow-x:auto">
+        <table id="evacTable">
+          <thead><tr><th>Area</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr data-zone="0" tabindex="0"><td><b>Beulah</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Heavy structure loss.</td></tr>
+            <tr data-zone="1" tabindex="0"><td><b>Rye</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Origin ~10 mi NW.</td></tr>
+            <tr data-zone="2" tabindex="0"><td><b>San Isabel / Lake Isabel</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Evac meetings Tue.</td></tr>
+            <tr data-zone="3" tabindex="0"><td><b>Wetmore</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Town defended.</td></tr>
+            <tr data-zone="4" tabindex="0"><td><b>Aspen Acres / Konn Rd</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Worst damage area.</td></tr>
+            <tr data-zone="5" tabindex="0"><td><b>Red Creek / North Creek</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Flare-ups along 165.</td></tr>
+            <tr data-zone="6" tabindex="0"><td><b>Williamsburg</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Ordered Sunday.</td></tr>
+            <tr data-zone="7" tabindex="0"><td><b>Hwy 67 south of Florence</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Checkpoint at CR 100.</td></tr>
+            <tr data-zone="8" tabindex="0"><td><b>Colorado City (west I-25)</b> <span class="rowhint">map ›</span></td><td><span class="chip down">Downgraded Pre-Evac</span></td><td>Re-entry card or ID + proof needed.</td></tr>
+            <tr data-zone="9" tabindex="0"><td><b>Huerfano Co. via Colorado City</b> <span class="rowhint">map ›</span></td><td><span class="chip pre">Pre-Evac</span></td><td>West of I-25.</td></tr>
+            <tr data-zone="10" tabindex="0"><td><b>Florence (town)</b> <span class="rowhint">map ›</span></td><td><span class="chip down">Not evacuated</span></td><td>Hosting evacuees at Pathfinder Park. Smoke main impact.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Official sources</h3>
+          <a class="cta2" href="https://app.watchduty.org" target="_blank" rel="noopener">Watch Duty — search any address</a>
+          <a class="cta2" href="https://www.pueblosheriff.com" target="_blank" rel="noopener">Pueblo County Sheriff</a>
+          <a class="cta2" href="https://www.facebook.com/FremontSheriff" target="_blank" rel="noopener">Fremont County Sheriff</a>
+        </div>
+        <div class="card">
+          <h3>Sign up for alerts</h3>
+          <ul class="clean">
+            <li><b>Pueblo:</b> CodeRED via Pueblo Sheriff site</li>
+            <li><b>Custer/Fremont/Huerfano:</b> Everbridge system for each county</li>
+            <li>Wireless Emergency Alerts hit phones automatically in danger zones</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="feed-sec">
+    <div class="wrap">
+      <h2>Live Updates &amp; Verified Posts</h2>
+      <div class="h2sub">Space for official bulletins and X posts. Add your own via the API hook.</div>
+      <div id="feedList">
+        <div class="feed-empty" id="feedEmpty">Live feed ready — official updates and verified posts will appear here.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="weather">
+    <div class="wrap">
+      <h2>Wind &amp; Weather at the Fire</h2>
+      <div id="alerts"><p class="loading">Weather module placeholder ready.</p></div>
+      <div class="card">
+        <h3>Forecast — Wet Mountains area</h3>
+        <div id="wxForecast"><p class="loading">Forecast module placeholder ready.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="help">
+    <div class="wrap">
+      <h2>Shelters &amp; Help</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Evacuation centers</h3>
+          <ul class="clean">
+            <li><b>Pueblo:</b> 1650 Cooper Place (YMCA also free)</li>
+            <li><b>Westcliffe:</b> Lange Hall</li>
+            <li><b>Florence:</b> Pathfinder Park — people + animals</li>
+            <li><b>Large animals:</b> CO State Fairgrounds, Pueblo</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Evacuee meetings (Tue July 7)</h3>
+          <ul class="clean">
+            <li><b>6 p.m.</b> — Custer County HS, Westcliffe (Lake Isabel / Hwy 165 corridor)</li>
+            <li><b>7 p.m.</b> — Custer County HS (Aspen Acres subdivision)</li>
+            <li>Grief counselors on site. Re-entry requires card or ID + proof of residency.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prep">
+    <div class="wrap">
+      <h2>Be Ready — Especially for Older Adults &amp; Seniors</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Go-bag (keep by the door)</h3>
+          <ul class="clean check">
+            <li>Medications — 7+ days + written list</li>
+            <li>Glasses, hearing aids, mobility aids, CPAP</li>
+            <li>ID, insurance/Medicare cards, key documents</li>
+            <li>Phone chargers, cash, water, N95 masks</li>
+            <li>Pet carrier, leash, food &amp; records</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Plan now</h3>
+          <ul class="clean check">
+            <li>Register for county emergency alerts</li>
+            <li>Agree on one out-of-area contact</li>
+            <li>Know two ways out (165, 96, 78, 67 often closed)</li>
+            <li>Keep gas tank above half; back car in</li>
+            <li>Check on neighbors who live alone</li>
+          </ul>
+        </div>
+      </div>
+      <div class="share">
+        <h3>Share this page</h3>
+        <p>Easy to share with neighbors or print as a QR flyer for community centers.</p>
+        <button id="shareBtn" class="cta2" type="button" style="width:100%;cursor:pointer;font-family:inherit">Copy link or share</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="disc"><b>Important:</b> This aggregates public sources and is <b>not</b> an official emergency product. For life-safety decisions, follow official county alerts. If told to evacuate — go immediately.</div>
+      <p>References: NIFC perimeter · County sheriffs · NWS forecast/alerts · OpenStreetMap Nominatim</p>
+      <p><a href="https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire" target="_blank" rel="noopener">InciWeb</a> · <a href="https://app.watchduty.org" target="_blank" rel="noopener">Watch Duty</a> · <a href="https://www.cotrip.org" target="_blank" rel="noopener">CoTrip roads</a> · <a href="https://fire.airnow.gov" target="_blank" rel="noopener">AirNow smoke</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+    let map=null, tileLayer=null, mapInitialized=false;
+    const FIRE_CENTER=[38.02,-104.99];
+
+    function applyTiles(){
+      if(!map) return;
+      if(tileLayer) map.removeLayer(tileLayer);
+      const dark=document.documentElement.dataset.theme==='dusk';
+      tileLayer=L.tileLayer(
+        dark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        {attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:18}
+      ).addTo(map);
+    }
+
+    function setTheme(t){
+      document.documentElement.dataset.theme=t;
+      const btn=document.getElementById('themeBtn');
+      if(btn) btn.textContent=t==='dusk' ? '☀️ Light' : '🌙 Dark';
+      store.set('aat-theme',t);
+      applyTiles();
+    }
+
+    function initThemeAndText(){
+      const themeBtn=document.getElementById('themeBtn');
+      if(themeBtn) themeBtn.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dusk'?'dawn':'dusk'));
+
+      const fsSteps=['','fs-lg','fs-xl'];
+      let fsIdx=+(store.get('aat-fs')||0);
+      const fsBtn=document.getElementById('fsBtn');
+      function applyFs(){
+        document.documentElement.className=fsSteps[fsIdx];
+        store.set('aat-fs',fsIdx);
+        if(fsBtn) fsBtn.setAttribute('aria-label',fsIdx<2?'Increase text size':'Reset text size');
+      }
+      if(fsBtn) fsBtn.addEventListener('click',()=>{fsIdx=(fsIdx+1)%3;applyFs();});
+
+      applyFs();
+      setTheme(store.get('aat-theme')||'dusk');
+    }
+
+    function showFallback(){
+      const mapEl=document.getElementById('map');
+      const fb=document.getElementById('map-fallback');
+      if(mapEl) mapEl.style.display='none';
+      if(fb) fb.style.display='block';
+    }
+
+    function initMap(){
+      try{
+        const mapEl=document.getElementById('map');
+        if(!mapEl || !window.L) return showFallback();
+
+        map=L.map('map',{zoomSnap:0.5,tap:true}).setView(FIRE_CENTER,9.5);
+        applyTiles();
+        mapInitialized=true;
+
+        const layers={
+          live:L.layerGroup().addTo(map),
+          zones:L.layerGroup().addTo(map),
+          towns:L.layerGroup().addTo(map)
+        };
+
+        L.marker([37.985,-105.055]).bindPopup('<b>Fire origin</b><br>June 29 near Aspen Acres Campground').addTo(layers.live);
+
+        const towns=[
+          ['Florence',38.3903,-105.1189,'Not evacuated — hosting evacuees at Pathfinder Park'],
+          ['Pueblo',38.2544,-104.6091,'Evac center at 1650 Cooper Place'],
+          ['Beulah',38.0781,-104.9878,'Under evacuation order'],
+          ['Rye',37.9214,-104.9317,'Under evacuation order'],
+          ['Colorado City',37.9447,-104.8365,'Downgraded to pre-evac']
+        ];
+
+        towns.forEach(([n,la,lo,txt])=>{
+          L.circleMarker([la,lo],{radius:5,color:'#fff',weight:2,fillColor:'#2A78C4',fillOpacity:.9})
+            .bindPopup(`<b>${n}</b><br>${txt}`).addTo(layers.towns);
+        });
+
+        const recenterBtn=document.getElementById('recenterBtn');
+        if(recenterBtn) recenterBtn.addEventListener('click',()=>map.setView(FIRE_CENTER,9.5));
+
+        const locateBtn=document.getElementById('locateBtn');
+        if(locateBtn) locateBtn.addEventListener('click',()=>map.locate({setView:true,enableHighAccuracy:true,maxZoom:12}));
+
+        setTimeout(()=>{
+          if(!mapInitialized || map.getSize().x < 120) showFallback();
+          else map.invalidateSize();
+        },1200);
+
+      }catch(e){
+        console.warn('Map init failed',e);
+        showFallback();
+      }
+    }
+
+    function initTimeline(){
+      const progression=[
+        {d:'June 29 · ~23k acres · 0% contained'},
+        {d:'July 1 · ~45k acres · 0%'},
+        {d:'July 3 · ~66k acres · 0%'},
+        {d:'July 5 · ~89k acres · 14%'},
+        {d:'July 7 · ~93.9k acres · 16% contained'}
+      ];
+      const tl=document.getElementById('tl');
+      const tlDate=document.getElementById('tlDate');
+      if(!tl || !tlDate) return;
+      const render=(i)=>tlDate.textContent=progression[i].d;
+      tl.addEventListener('input',e=>render(+e.target.value));
+      render(4);
+    }
+
+    function initEvacRows(){
+      document.querySelectorAll('#evacTable tbody tr').forEach(tr=>{
+        const go=()=>{
+          document.getElementById('map-sec')?.scrollIntoView({behavior:'smooth'});
+          setTimeout(()=>{ if(map) map.setView([38.1,-105.0],10); },400);
+        };
+        tr.addEventListener('click',go);
+        tr.addEventListener('keydown',e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); go(); } });
+      });
+    }
+
+    async function checkAddress(){
+      const q=document.getElementById('addrIn')?.value.trim();
+      const out=document.getElementById('addrOut');
+      if(!out) return;
+      if(!q){ out.innerHTML='<p>Please enter an address.</p>'; return; }
+      out.innerHTML='<p class="loading">Looking up location…</p>';
+      try{
+        const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q='+encodeURIComponent(q+', Colorado'));
+        const j=await r.json();
+        if(!j.length){ out.innerHTML='<p>Couldn’t find that address. Try adding town name.</p>'; return; }
+        const lat=+j[0].lat, lng=+j[0].lon;
+        const label=j[0].display_name.split(',').slice(0,3).join(',');
+        out.innerHTML=`<p style="font-weight:700;margin-bottom:8px">📍 ${label}</p><div class="card"><p>Location found. Use Watch Duty to confirm exact evacuation status for this address.</p></div><a class="cta2" href="https://app.watchduty.org" target="_blank" rel="noopener">Confirm your evacuation zone →</a>`;
+        if(map) map.setView([lat,lng],11);
+      }catch(e){
+        out.innerHTML='<p>Lookup failed — try again or use Watch Duty directly.</p>';
+      }
+    }
+
+    function initAddress(){
+      const btn=document.getElementById('addrBtn');
+      const input=document.getElementById('addrIn');
+      if(btn) btn.addEventListener('click',checkAddress);
+      if(input) input.addEventListener('keydown',e=>{ if(e.key==='Enter') checkAddress(); });
+    }
+
+    function initShare(){
+      const btn=document.getElementById('shareBtn');
+      if(!btn) return;
+      btn.addEventListener('click',async()=>{
+        const data={title:'Aspen Acres Fire Tracker',text:'Community wildfire map, zones, shelters, and prep info',url:location.href};
+        try{
+          if(navigator.share) await navigator.share(data);
+          else if(navigator.clipboard){ await navigator.clipboard.writeText(location.href); btn.textContent='Link copied ✓'; }
+        }catch(e){}
+      });
+    }
+
+    function initLiveChip(){
+      const chip=document.getElementById('liveChip');
+      if(!chip) return;
+      setTimeout(()=>{
+        chip.innerHTML='<span class="dot"></span>Loaded • '+new Date().toLocaleTimeString();
+      },1200);
+    }
+
+    window.TrackerAPI={
+      map:()=>map,
+      setTheme,
+      addFeedItem:({source,handle,time,text,link,verified=false})=>{
+        const empty=document.getElementById('feedEmpty'); if(empty) empty.remove();
+        const list=document.getElementById('feedList'); if(!list) return null;
+        const div=document.createElement('div');
+        div.className='feed-item'+(verified?' verified':'');
+        div.innerHTML=`<div class="fi-top"><span class="fi-src">${source||'Update'}</span>${handle?`<span class="fi-handle">${handle}</span>`:''}${time?`<span class="fi-time">${time}</span>`:''}</div><div class="fi-text">${text||''}${link?` <a href="${link}" target="_blank" rel="noopener">source →</a>`:''}</div>`;
+        list.prepend(div);
+        return div;
+      }
+    };
+
+    function init(){
+      initThemeAndText();
+      initMap();
+      initTimeline();
+      initEvacRows();
+      initAddress();
+      initShare();
+      initLiveChip();
+    }
+
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+    else init();
+  </script>
+</body>
+</html>
