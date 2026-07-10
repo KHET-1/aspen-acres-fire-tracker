@@ -39,20 +39,23 @@
     :focus-visible{ outline:3px solid var(--contain); outline-offset:2px; border-radius:4px; }
     @media (prefers-reduced-motion:reduce){ *{ transition:none!important; animation:none!important; } html{ scroll-behavior:auto; } }
 
-    header{ border-bottom:1px solid var(--line); padding:28px 0 20px; background:var(--panel); }
-    .topbar{ display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:24px; }
+    header{ border-bottom:1px solid var(--line); padding:24px 0; background:var(--panel); }
+    .topbar{ display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,360px); align-items:stretch; gap:40px; }
+    .header-copy{ padding:8px 0; }
     .kicker{ letter-spacing:.14em; font-size:.68rem; font-weight:700; color:var(--fire); text-transform:uppercase; margin-bottom:10px; }
     h1{ font-size:clamp(2rem,5vw,3rem); line-height:1.02; font-weight:700; margin:0 0 10px; }
     .sub{ color:var(--ink-dim); font-size:1rem; max-width:560px; }
-    .ctrls{ display:flex; gap:8px; align-items:center; }
+    .header-side{ display:grid; align-content:space-between; gap:22px; padding:16px 18px; background:var(--panel2); border-left:3px solid var(--fire); border-radius:0 var(--radius) var(--radius) 0; }
+    .ctrls{ display:flex; gap:8px; align-items:center; justify-content:flex-end; }
     .ctrl{
       background:var(--panel); border:1px solid var(--line); color:var(--ink); border-radius:8px; font-family:inherit;
       font-size:.9rem; font-weight:700; padding:10px 14px; cursor:pointer; min-height:44px;
     }
     .ctrl:hover{ border-color:var(--ink-faint); }
     .ctrl-text-large{ font-size:1.15em; }
-    .stamp{ display:inline-block; margin-top:16px; padding:0; border:0; border-radius:0; font-size:.8rem; color:var(--warn); background:transparent; font-weight:700; }
-    .livechip{ display:inline-block; margin-top:16px; margin-left:18px; padding:0; border-radius:0; font-size:.8rem; background:transparent; color:var(--ok); border:0; }
+    .header-status-label{ font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-faint); font-weight:700; margin-bottom:3px; }
+    .stamp{ display:block; margin:0; padding:0; border:0; border-radius:0; font-size:.88rem; color:var(--warn); background:transparent; font-weight:700; }
+    .livechip{ display:block; margin:8px 0 0; padding:0; border-radius:0; font-size:.78rem; background:transparent; color:var(--ok); border:0; }
     .livechip .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--ok); margin-right:6px; animation:pulse 1.6s infinite; }
     @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
 
@@ -75,9 +78,16 @@
     .stat .l{ font-size:.63rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.07em; margin-top:2px; font-weight:700; line-height:1.2; }
     .stat.fire .n{ color:var(--fire); } .stat.contain .n{ color:var(--contain); } .stat.evac .n{ color:var(--evac); }
 
-    #map{ height:50vh; min-height:320px; border-radius:var(--radius); border:1px solid var(--line); background:var(--panel2); box-shadow:var(--shadow); display:block; }
+    .map-frame{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--panel); box-shadow:var(--shadow); }
+    .map-topline{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line); }
+    .map-label{ font-size:.74rem; text-transform:uppercase; letter-spacing:.09em; color:var(--ink-faint); font-weight:700; }
+    .map-verify{ font-size:.8rem; font-weight:700; }
+    #map{ height:clamp(360px,52vh,560px); min-height:320px; border:0; border-radius:0; background:var(--panel2); box-shadow:none; display:block; }
     #map-fallback{ display:none; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; margin-top:12px; }
     .map-fallback-panel{ padding:20px; background:var(--panel); }
+    .map-notice{ background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:6px 8px; color:var(--ink); font-family:"Atkinson Hyperlegible",sans-serif; box-shadow:var(--shadow); }
+    .map-notice b{ display:block; font-size:.72rem; }
+    .map-notice span{ display:block; font-size:.65rem; color:var(--ink-faint); margin-top:1px; }
     .mapbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
     .toggle{
       display:flex; align-items:center; gap:8px; background:transparent; border:0; border-radius:0;
@@ -204,10 +214,12 @@
     @media (max-width: 600px){
       html{ font-size:17px; }
       h1{ font-size:1.9rem; }
-      .topbar{ grid-template-columns:1fr; gap:14px; }
-      .ctrls{ order:-1; justify-self:end; }
-      .stamp,.livechip{ display:block; margin-left:0; margin-top:10px; }
-      #map{ height:45vh; min-height:280px; }
+      .topbar{ grid-template-columns:1fr; gap:16px; }
+      .header-copy{ padding:0; }
+      .header-side{ padding:14px; border-left:0; border-top:3px solid var(--fire); border-radius:0 0 var(--radius) var(--radius); gap:14px; }
+      .ctrls{ justify-content:flex-start; }
+      #map{ height:48vh; min-height:320px; }
+      .map-topline{ align-items:flex-start; flex-direction:column; }
       .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 0; }
       .stat:nth-child(odd){ border-left:0; padding-left:0; }
       .stat:nth-child(even){ padding-left:14px; }
@@ -226,18 +238,23 @@
   <header>
     <div class="wrap">
       <div class="topbar">
-        <div>
+        <div class="header-copy">
           <div class="kicker">Southern Colorado · Pueblo · Custer · Fremont · Huerfano</div>
           <h1>Aspen Acres Fire</h1>
           <div class="sub">Community guide to official Aspen Acres Fire information for Southern Colorado.</div>
         </div>
-        <div class="ctrls" role="group" aria-label="Display settings">
-          <button class="ctrl" id="themeBtn" type="button" aria-label="Switch theme">☀️ Light</button>
-          <button class="ctrl" id="fsBtn" type="button" aria-label="Text size">A<span class="ctrl-text-large">A</span></button>
+        <div class="header-side">
+          <div class="ctrls" role="group" aria-label="Display settings">
+            <button class="ctrl" id="themeBtn" type="button" aria-label="Switch theme">☀️ Light</button>
+            <button class="ctrl" id="fsBtn" type="button" aria-label="Text size">A<span class="ctrl-text-large">A</span></button>
+          </div>
+          <div>
+            <div class="header-status-label">Latest verified official update</div>
+            <a class="stamp" href="https://inciweb.wildfire.gov/incident-publication/copsf-aspen-acres-fire/aspen-acres-fire-update-07-09-2026" target="_blank" rel="noopener">July 9, 2026 · 8:00 a.m.</a>
+            <span class="livechip" id="liveChip"><span class="dot"></span>New official updates may supersede this page</span>
+          </div>
         </div>
       </div>
-      <a class="stamp" href="https://inciweb.wildfire.gov/incident-publication/copsf-aspen-acres-fire/aspen-acres-fire-update-07-09-2026" target="_blank" rel="noopener">Official update reviewed • July 9, 2026, 8:00 a.m.</a>
-      <span class="livechip" id="liveChip"><span class="dot"></span>New official updates may supersede this page</span>
     </div>
   </header>
 
@@ -266,11 +283,17 @@
 
   <section id="map-sec" data-anchor="map-command-center">
     <div class="wrap">
-      <h2>Fire Map &amp; Zones</h2>
+      <h2>Incident Reference Map</h2>
       <div class="h2sub">Reference map for orientation only. It does not show current evacuation boundaries; confirm official status before acting.</div>
       <div class="map-layout">
         <div>
-          <div id="map" role="application" aria-label="Interactive Leaflet map of Aspen Acres Fire"></div>
+          <div class="map-frame">
+            <div class="map-topline">
+              <span class="map-label">Community reference map</span>
+              <a class="map-verify" href="https://app.watchduty.org" target="_blank" rel="noopener">Verify current boundaries in Watch Duty →</a>
+            </div>
+            <div id="map" role="application" aria-label="Interactive Leaflet reference map of Aspen Acres Fire"></div>
+          </div>
 
           <div id="map-fallback">
             <div class="map-fallback-panel">
@@ -584,6 +607,13 @@
         map=L.map('map',{zoomSnap:0.5,tap:true}).setView(FIRE_CENTER,9.5);
         applyTiles();
         mapInitialized=true;
+        const notice=L.control({position:'topleft'});
+        notice.onAdd=()=>{
+          const element=L.DomUtil.create('div','map-notice');
+          element.innerHTML='<b>Reference map</b><span>Not a live evacuation boundary</span>';
+          return element;
+        };
+        notice.addTo(map);
 
         const layers={
           live:L.layerGroup().addTo(map),
