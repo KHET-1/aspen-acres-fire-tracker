@@ -17,6 +17,9 @@ This is a static site.
 This page aggregates public information and is **not** an official emergency alert system.  
 For life-safety decisions, follow county sheriff alerts, official evacuation orders, and Watch Duty.
 
+## Data freshness
+The site shows the date and time of the most recently reviewed official InciWeb update. It does not auto-ingest emergency data or social posts; use its linked official sources for current evacuation boundaries, closures, smoke, and local assistance.
+
 ## Suggested official sources
 - https://app.watchduty.org
 - https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire

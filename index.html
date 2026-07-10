@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dusk">
+<html lang="en" data-theme="dawn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -15,16 +15,16 @@
 
   <style>
     [data-theme="dawn"]{
-      --bg:#EFEBE2; --panel:#F8F5EE; --panel2:#E6E0D3; --line:#CDC5B4; --ink:#242B29; --ink-dim:#48524E; --ink-faint:#6C766F;
-      --fire:#B8471F; --fire-soft:#D97748; --contain:#1D6B5C; --warn:#7A5A0E; --evac:#A8231C; --evac-bg:#F3DCD9; --pre-bg:#F0E6CC;
-      --ok:#1E6B3C; --ok-bg:#DDEBDD; --link:#14588F; --shadow:0 1px 3px rgba(60,50,30,.12); --chipline:rgba(0,0,0,.15);
+      --bg:#FFF9F4; --panel:#FFFEFC; --panel2:#FFF0E4; --line:#EBCFBC; --ink:#2D2420; --ink-dim:#5E4D45; --ink-faint:#806C62;
+      --fire:#B64725; --fire-soft:#D9562B; --contain:#187054; --warn:#8C5D00; --evac:#B42318; --evac-bg:#FCE7E1; --pre-bg:#FFF0CA;
+      --ok:#14734F; --ok-bg:#E5F3E9; --link:#0A6680; --shadow:0 10px 30px rgba(104,61,35,.07); --chipline:rgba(45,36,32,.12);
     }
     [data-theme="dusk"]{
-      --bg:#21272C; --panel:#2B3238; --panel2:#353D44; --line:#48525B; --ink:#F1EFE9; --ink-dim:#C6CAC7; --ink-faint:#9AA29F;
-      --fire:#FF9457; --fire-soft:#E0451F; --contain:#5FCDB8; --warn:#F2C14E; --evac:#FF847B; --evac-bg:#4A2825; --pre-bg:#453A1E;
-      --ok:#7FD99B; --ok-bg:#233A2C; --link:#93C8F2; --shadow:0 1px 4px rgba(0,0,0,.35); --chipline:rgba(255,255,255,.16);
+      --bg:#2B1E2B; --panel:#38283A; --panel2:#4A3247; --line:#765467; --ink:#FFF8F2; --ink-dim:#E9D7D0; --ink-faint:#C9AAA7;
+      --fire:#FFAA78; --fire-soft:#E66239; --contain:#8CDBC0; --warn:#FFD26A; --evac:#FFAAA2; --evac-bg:#593037; --pre-bg:#594622;
+      --ok:#9EE0B3; --ok-bg:#234536; --link:#A8DDFF; --shadow:0 10px 30px rgba(0,0,0,.18); --chipline:rgba(255,255,255,.16);
     }
-    :root{ --radius:14px; }
+    :root{ --radius:10px; }
     *{ box-sizing:border-box; margin:0; padding:0; }
     html{ scroll-behavior:smooth; font-size:18px; }
     html.fs-lg{ font-size:20px; }
@@ -39,61 +39,62 @@
     :focus-visible{ outline:3px solid var(--contain); outline-offset:2px; border-radius:4px; }
     @media (prefers-reduced-motion:reduce){ *{ transition:none!important; animation:none!important; } html{ scroll-behavior:auto; } }
 
-    header{ border-bottom:1px solid var(--line); padding:14px 0 12px; background:var(--panel); }
-    .topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
-    .kicker{ letter-spacing:.16em; font-size:.72rem; font-weight:700; color:var(--fire); text-transform:uppercase; }
-    h1{ font-size:clamp(1.7rem,5vw,2.5rem); line-height:1.08; font-weight:700; margin:4px 0 6px; }
-    .sub{ color:var(--ink-dim); font-size:.95rem; max-width:640px; }
+    header{ border-bottom:1px solid var(--line); padding:28px 0 20px; background:var(--panel); }
+    .topbar{ display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:24px; }
+    .kicker{ letter-spacing:.14em; font-size:.68rem; font-weight:700; color:var(--fire); text-transform:uppercase; margin-bottom:10px; }
+    h1{ font-size:clamp(2rem,5vw,3rem); line-height:1.02; font-weight:700; margin:0 0 10px; }
+    .sub{ color:var(--ink-dim); font-size:1rem; max-width:560px; }
     .ctrls{ display:flex; gap:8px; align-items:center; }
     .ctrl{
-      background:var(--panel2); border:1px solid var(--line); color:var(--ink); border-radius:10px; font-family:inherit;
-      font-size:.9rem; font-weight:700; padding:10px 14px; cursor:pointer; min-height:44px; box-shadow:var(--shadow);
+      background:var(--panel); border:1px solid var(--line); color:var(--ink); border-radius:8px; font-family:inherit;
+      font-size:.9rem; font-weight:700; padding:10px 14px; cursor:pointer; min-height:44px;
     }
     .ctrl:hover{ border-color:var(--ink-faint); }
     .ctrl-text-large{ font-size:1.15em; }
-    .stamp{ display:inline-block; margin-top:8px; padding:5px 12px; border:1px solid var(--line); border-radius:999px; font-size:.78rem; color:var(--warn); background:var(--panel2); }
-    .livechip{ display:inline-block; margin-top:8px; margin-left:6px; padding:5px 12px; border-radius:999px; font-size:.78rem; background:var(--ok-bg); color:var(--ok); border:1px solid var(--chipline); }
+    .stamp{ display:inline-block; margin-top:16px; padding:0; border:0; border-radius:0; font-size:.8rem; color:var(--warn); background:transparent; font-weight:700; }
+    .livechip{ display:inline-block; margin-top:16px; margin-left:18px; padding:0; border-radius:0; font-size:.8rem; background:transparent; color:var(--ok); border:0; }
     .livechip .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--ok); margin-right:6px; animation:pulse 1.6s infinite; }
     @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
 
-    nav{ position:sticky; top:0; z-index:1000; background:var(--panel); border-bottom:2px solid var(--line); box-shadow:var(--shadow); }
+    nav{ position:sticky; top:0; z-index:1000; background:color-mix(in srgb,var(--panel) 94%,transparent); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
     nav .wrap{ display:flex; gap:2px; overflow-x:auto; padding:4px 12px; -webkit-overflow-scrolling:touch; }
     nav a{
       white-space:nowrap; color:var(--ink-dim); text-decoration:none; font-size:.86rem; font-weight:700;
-      padding:11px 14px; border-radius:9px; min-height:44px; display:flex; align-items:center;
+      padding:12px 14px 10px; border-radius:0; min-height:44px; display:flex; align-items:center; border-bottom:2px solid transparent;
     }
-    nav a:hover, nav a:focus{ background:var(--panel2); color:var(--ink); }
+    nav a:hover, nav a:focus{ background:transparent; color:var(--ink); border-bottom-color:var(--fire); }
 
     section{ padding:18px 0 6px; }
     h2{ font-size:1.35rem; font-weight:700; margin-bottom:4px; }
     .h2sub{ color:var(--ink-faint); font-size:.88rem; margin-bottom:14px; max-width:720px; }
 
-    .stats{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:10px 0 2px; }
-    .stat{ background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:8px 10px; box-shadow:var(--shadow); }
-    .stat .n{ font-size:1.2rem; font-weight:700; letter-spacing:-.01em; line-height:1.1; }
+    .stats{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:0; margin:20px 0 8px; padding:14px 0; border-bottom:1px solid var(--line); }
+    .stat{ background:transparent; border:0; border-left:1px solid var(--line); border-radius:0; padding:4px 16px; box-shadow:none; }
+    .stat:first-child{ border-left:0; padding-left:0; }
+    .stat .n{ font-size:1.35rem; font-weight:700; letter-spacing:-.02em; line-height:1.1; }
     .stat .l{ font-size:.63rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.07em; margin-top:2px; font-weight:700; line-height:1.2; }
     .stat.fire .n{ color:var(--fire); } .stat.contain .n{ color:var(--contain); } .stat.evac .n{ color:var(--evac); }
 
-    #map{ height:50vh; min-height:320px; border-radius:var(--radius); border:2px solid var(--line); background:var(--panel2); box-shadow:var(--shadow); display:block; }
-    #map-fallback{ display:none; border-radius:var(--radius); border:2px solid var(--line); box-shadow:var(--shadow); overflow:hidden; margin-top:12px; }
+    #map{ height:50vh; min-height:320px; border-radius:var(--radius); border:1px solid var(--line); background:var(--panel2); box-shadow:var(--shadow); display:block; }
+    #map-fallback{ display:none; border-radius:var(--radius); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; margin-top:12px; }
     .map-fallback-panel{ padding:20px; background:var(--panel); }
     .mapbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
     .toggle{
-      display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line); border-radius:999px;
-      padding:9px 15px; font-size:.85rem; font-weight:700; cursor:pointer; user-select:none; color:var(--ink-dim); min-height:44px; box-shadow:var(--shadow);
+      display:flex; align-items:center; gap:8px; background:transparent; border:0; border-radius:0;
+      padding:7px 0; font-size:.85rem; font-weight:700; cursor:pointer; user-select:none; color:var(--ink-dim); min-height:36px;
     }
     .toggle input{ accent-color:var(--fire); width:18px; height:18px; cursor:pointer; }
-    .toggle.on{ color:var(--ink); border-color:var(--ink-faint); }
+    .toggle.on{ color:var(--ink); }
     .mapbtns{ display:flex; gap:8px; margin-left:auto; }
-    .compact-options{ margin-top:8px; border:1px solid var(--line); border-radius:10px; background:var(--panel); }
-    .compact-options summary{ cursor:pointer; padding:10px 12px; font-size:.84rem; font-weight:700; color:var(--ink-dim); }
+    .compact-options{ margin-top:8px; border-top:1px solid var(--line); border-radius:0; background:transparent; }
+    .compact-options summary{ cursor:pointer; padding:10px 0; font-size:.84rem; font-weight:700; color:var(--ink-dim); }
     .compact-options[open] summary{ border-bottom:1px solid var(--line); color:var(--ink); }
-    .compact-options .inside{ padding:10px 12px; }
+    .compact-options .inside{ padding:4px 0 10px; }
     .mapbar-flat{ margin:0; }
     .map-fallback-note{ text-align:center; margin:8px; }
     .quick-grid-spaced{ margin-top:8px; }
 
-    .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:11px 14px; margin-top:8px; box-shadow:var(--shadow); }
+    .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-top:12px; box-shadow:none; }
     .timeline label{ font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700; }
     .timeline .tl-date{ font-size:1.05rem; font-weight:700; color:var(--fire); margin:2px 0 6px; }
     .timeline input[type=range]{ width:100%; accent-color:var(--fire); height:34px; cursor:pointer; }
@@ -112,7 +113,7 @@
 
     .grid2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:10px; }
     @media (max-width:760px){ .grid2{ grid-template-columns:1fr; } }
-    .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-bottom:10px; box-shadow:var(--shadow); }
+    .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:12px; box-shadow:none; }
     .card h3{ font-size:.98rem; font-weight:700; margin-bottom:8px; }
     .map-layout{ display:grid; grid-template-columns:minmax(0,1.95fr) minmax(280px,1fr); gap:10px; align-items:start; }
     .map-side{ position:sticky; top:72px; }
@@ -121,14 +122,15 @@
     .focus-list{ display:grid; gap:6px; margin-top:8px; }
     .focus-btn{
       width:100%; text-align:left; background:var(--panel2); border:1px solid var(--line); color:var(--ink);
-      border-radius:10px; padding:9px 10px; font:inherit; font-size:.82rem; font-weight:700; cursor:pointer;
+      border-radius:7px; padding:10px 12px; font:inherit; font-size:.82rem; font-weight:700; cursor:pointer;
     }
     .focus-btn:hover{ border-color:var(--ink-faint); }
     .kpi-row{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:8px; }
-    .kpi{ background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+    .kpi{ background:transparent; border:0; border-left:2px solid var(--line); border-radius:0; padding:4px 10px; }
+    .kpi:first-child{ border-left:0; padding-left:0; }
     .kpi .n{ font-weight:700; font-size:1rem; line-height:1.1; }
     .kpi .l{ font-size:.64rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; font-weight:700; }
-    .std{ background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:9px 10px; margin-top:8px; }
+    .std{ background:var(--panel2); border:0; border-radius:7px; padding:12px 14px; margin-top:14px; }
     .std h4{ font-size:.76rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); margin-bottom:6px; }
     .std ol{ margin:0 0 0 18px; padding:0; }
     .std li{ margin:0 0 4px; font-size:.8rem; color:var(--ink-dim); }
@@ -147,18 +149,18 @@
     #evacTable tbody tr:hover, #evacTable tbody tr:focus-visible{ background:var(--panel2); }
     .rowhint{ font-size:.7rem; color:var(--link); font-weight:700; }
 
-    .big-cta{ display:block; background:var(--fire-soft); color:#fff; text-decoration:none; text-align:center; font-size:.98rem; font-weight:700; padding:15px; border-radius:var(--radius); margin:8px 0; box-shadow:var(--shadow); }
+    .big-cta{ display:block; background:var(--fire-soft); color:#fff; text-decoration:none; text-align:center; font-size:.98rem; font-weight:700; padding:15px; border-radius:8px; margin:8px 0; box-shadow:none; }
     [data-theme="dawn"] .big-cta{ background:var(--fire); }
     .cta2{
       display:block; background:var(--panel2); border:1px solid var(--line); color:var(--ink); text-decoration:none;
-      text-align:center; font-size:.9rem; font-weight:700; padding:13px; border-radius:var(--radius); margin:7px 0; box-shadow:var(--shadow);
+      text-align:center; font-size:.9rem; font-weight:700; padding:13px; border-radius:8px; margin:7px 0; box-shadow:none;
     }
     .cta2:hover{ border-color:var(--ink-faint); }
 
     .loading{ color:var(--ink-faint); font-style:italic; font-size:.82rem; }
 
     #feedList{ display:flex; flex-direction:column; gap:8px; }
-    .feed-item{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:13px 16px; box-shadow:var(--shadow); }
+    .feed-item{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; box-shadow:none; }
     .feed-item .fi-top{ display:flex; gap:6px; align-items:baseline; flex-wrap:wrap; margin-bottom:4px; }
     .feed-item .fi-src{ font-weight:700; font-size:.88rem; }
     .feed-item .fi-handle{ color:var(--ink-faint); font-size:.78rem; }
@@ -202,8 +204,13 @@
     @media (max-width: 600px){
       html{ font-size:17px; }
       h1{ font-size:1.9rem; }
+      .topbar{ grid-template-columns:1fr; gap:14px; }
+      .ctrls{ order:-1; justify-self:end; }
+      .stamp,.livechip{ display:block; margin-left:0; margin-top:10px; }
       #map{ height:45vh; min-height:280px; }
-      .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 0; }
+      .stat:nth-child(odd){ border-left:0; padding-left:0; }
+      .stat:nth-child(even){ padding-left:14px; }
       .kpi-row{ grid-template-columns:repeat(2,minmax(0,1fr)); }
       .map-layout{ grid-template-columns:1fr; }
       .map-side{ position:static; }
@@ -222,15 +229,15 @@
         <div>
           <div class="kicker">Southern Colorado · Pueblo · Custer · Fremont · Huerfano</div>
           <h1>Aspen Acres Fire</h1>
-          <div class="sub">Community tracker for the largest active wildfire in Colorado — burning in the Wet Mountains west of I-25.</div>
+          <div class="sub">Community guide to official Aspen Acres Fire information for Southern Colorado.</div>
         </div>
         <div class="ctrls" role="group" aria-label="Display settings">
           <button class="ctrl" id="themeBtn" type="button" aria-label="Switch theme">☀️ Light</button>
           <button class="ctrl" id="fsBtn" type="button" aria-label="Text size">A<span class="ctrl-text-large">A</span></button>
         </div>
       </div>
-      <span class="stamp">Community reference • July 7, 2026</span>
-      <span class="livechip" id="liveChip"><span class="dot"></span>Check official sources for changes</span>
+      <a class="stamp" href="https://inciweb.wildfire.gov/incident-publication/copsf-aspen-acres-fire/aspen-acres-fire-update-07-09-2026" target="_blank" rel="noopener">Official update reviewed • July 9, 2026, 8:00 a.m.</a>
+      <span class="livechip" id="liveChip"><span class="dot"></span>New official updates may supersede this page</span>
     </div>
   </header>
 
@@ -248,19 +255,19 @@
 
   <div class="wrap">
     <div class="stats" id="stats">
-      <div class="stat fire"><div class="n" data-stat="acres">93,916</div><div class="l">Acres burned</div></div>
-      <div class="stat contain"><div class="n" data-stat="contain">16%</div><div class="l">Contained</div></div>
-      <div class="stat"><div class="n" data-stat="personnel">1,300+</div><div class="l">Personnel</div></div>
-      <div class="stat evac"><div class="n" data-stat="evacuated">~11,000</div><div class="l">Evacuated</div></div>
-      <div class="stat"><div class="n" data-stat="homes">263+</div><div class="l">Homes lost</div></div>
-      <div class="stat"><div class="n" data-stat="deaths">0</div><div class="l">Deaths</div></div>
+      <div class="stat fire"><div class="n" data-stat="acres">96,121</div><div class="l">Acres · July 9</div></div>
+      <div class="stat contain"><div class="n" data-stat="contain">14%</div><div class="l">Contained · July 9</div></div>
+      <div class="stat"><div class="n" data-stat="personnel">~1,831</div><div class="l">Personnel · July 9</div></div>
+      <div class="stat evac"><div class="n">Active</div><div class="l">Evacuations · verify</div></div>
+      <div class="stat"><div class="n">Stage 2</div><div class="l">Fire restrictions</div></div>
+      <div class="stat"><div class="n">TFR</div><div class="l">No drones or aircraft</div></div>
     </div>
   </div>
 
   <section id="map-sec" data-anchor="map-command-center">
     <div class="wrap">
       <h2>Fire Map &amp; Zones</h2>
-      <div class="h2sub">Reference map for orientation. Tap zones or table rows, then confirm official boundaries before acting. If the interactive map fails, a static fallback appears.</div>
+      <div class="h2sub">Reference map for orientation only. It does not show current evacuation boundaries; confirm official status before acting.</div>
       <div class="map-layout">
         <div>
           <div id="map" role="application" aria-label="Interactive Leaflet map of Aspen Acres Fire"></div>
@@ -275,8 +282,8 @@
 
           <div class="mapbar" id="toggles">
             <label class="toggle on"><input type="checkbox" checked data-layer="live"> Fire reference</label>
-            <label class="toggle on"><input type="checkbox" checked data-layer="zones"> Evac zones</label>
-            <label class="toggle on"><input type="checkbox" checked data-layer="places"> Shelters &amp; help</label>
+            <label class="toggle on"><input type="checkbox" checked data-layer="zones"> Reference areas</label>
+            <label class="toggle on"><input type="checkbox" checked data-layer="places"> Community locations</label>
           </div>
           <details class="compact-options">
             <summary>More map layers and location tools</summary>
@@ -294,22 +301,19 @@
           </details>
 
           <div class="timeline">
-            <label for="tl">Fire growth timeline — drag to scrub history</label>
-            <div class="tl-date" id="tlDate"></div>
-            <input type="range" id="tl" min="0" max="4" value="4" step="1" aria-label="Fire progression">
-            <div class="tl-ticks"><span>Jun 29</span><span>Jul 1</span><span>Jul 3</span><span>Jul 5</span><span>Jul 7</span></div>
+            <label>Latest verified official update</label>
+            <div class="tl-date">July 9, 2026 · 8:00 a.m.</div>
+            <p class="note">96,121 acres · 14% containment · approximately 1,831 personnel. Check InciWeb for newer updates.</p>
           </div>
 
           <div class="legend">
             <span><span class="sw sw-reference"></span> Fire reference</span>
-            <span><span class="sw sw-order"></span> Evac order</span>
-            <span><span class="sw sw-pre"></span> Pre-evac</span>
-            <span><span class="sw sw-down"></span> Downgraded</span>
+            <span><span class="sw sw-roads"></span> Reference areas</span>
             <span><span class="sw sw-roads"></span> Key roads</span>
             <span><span class="sw sw-forest"></span> National forest (approx)</span>
-            <span><span class="sw sw-help"></span> Shelters &amp; food/help</span>
+            <span><span class="sw sw-help"></span> Community locations</span>
           </div>
-          <p class="note">Zones are schematic for quick reference. For parcel-level boundaries, verify with official county maps or Watch Duty.</p>
+          <p class="note">Reference areas and community locations are not current orders or confirmed services. Verify with county officials or Watch Duty.</p>
         </div>
         <aside class="card map-side" aria-label="At-a-glance response panel" data-anchor="response-standard-panel">
           <h3>At-a-glance action panel</h3>
@@ -321,16 +325,16 @@
           </div>
           <div class="quick-grid quick-grid-spaced">
             <a class="big-cta" href="https://app.watchduty.org" target="_blank" rel="noopener">Open Watch Duty now →</a>
-            <a class="cta2" href="https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire" target="_blank" rel="noopener">Official InciWeb page</a>
+            <a class="cta2" href="https://inciweb.wildfire.gov/incident-publication/copsf-aspen-acres-fire/aspen-acres-fire-update-07-09-2026" target="_blank" rel="noopener">Latest official InciWeb update</a>
             <a class="cta2" href="https://www.cotrip.org" target="_blank" rel="noopener">Road closures (CoTrip)</a>
           </div>
           <details class="compact-options">
             <summary>Choose a map focus</summary>
             <div class="inside focus-list">
-              <button class="focus-btn" type="button" data-focus="38.2544,-104.6091,11.4">Pueblo shelter + city services</button>
-              <button class="focus-btn" type="button" data-focus="38.3903,-105.1189,12">Florence shelters + supply area</button>
-              <button class="focus-btn" type="button" data-focus="37.9447,-104.8365,11.7">Colorado City routes + fuel</button>
-              <button class="focus-btn" type="button" data-focus="38.1347,-105.4658,11">Westcliffe evac center</button>
+              <button class="focus-btn" type="button" data-focus="38.2544,-104.6091,11.4">Pueblo reference area</button>
+              <button class="focus-btn" type="button" data-focus="38.3903,-105.1189,12">Florence reference area</button>
+              <button class="focus-btn" type="button" data-focus="37.9447,-104.8365,11.7">Colorado City reference area</button>
+              <button class="focus-btn" type="button" data-focus="38.1347,-105.4658,11">Westcliffe reference area</button>
               <button class="focus-btn" type="button" data-focus="38.02,-104.99,9.5">Reset to fire overview</button>
             </div>
           </details>
@@ -377,23 +381,15 @@
 
   <section id="evac" data-anchor="evac-grid">
     <div class="wrap">
-      <h2>Evacuation Status by Area</h2>
-      <div class="h2sub">Tap any row to focus the map. Orders can change quickly.</div>
+      <h2>Evacuation Verification</h2>
+      <div class="h2sub">The July 9 official update confirms active evacuations and pre-evacuations across four counties, but does not provide a current parcel-by-parcel status here. Use these current official contacts.</div>
       <div class="card table-card">
         <table id="evacTable">
-          <thead><tr><th>Area</th><th>Status</th><th>Notes</th></tr></thead>
+          <thead><tr><th>Area</th><th>Official contact</th><th>How to verify</th></tr></thead>
           <tbody>
-            <tr data-zone="0" tabindex="0"><td><b>Beulah</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Heavy structure loss.</td></tr>
-            <tr data-zone="1" tabindex="0"><td><b>Rye</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Origin ~10 mi NW.</td></tr>
-            <tr data-zone="2" tabindex="0"><td><b>San Isabel / Lake Isabel</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Evac meetings Tue.</td></tr>
-            <tr data-zone="3" tabindex="0"><td><b>Wetmore</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Town defended.</td></tr>
-            <tr data-zone="4" tabindex="0"><td><b>Aspen Acres / Konn Rd</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Worst damage area.</td></tr>
-            <tr data-zone="5" tabindex="0"><td><b>Red Creek / North Creek</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Flare-ups along 165.</td></tr>
-            <tr data-zone="6" tabindex="0"><td><b>Williamsburg</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Ordered Sunday.</td></tr>
-            <tr data-zone="7" tabindex="0"><td><b>Hwy 67 south of Florence</b> <span class="rowhint">map ›</span></td><td><span class="chip order">Evac Order</span></td><td>Checkpoint at CR 100.</td></tr>
-            <tr data-zone="8" tabindex="0"><td><b>Colorado City (west I-25)</b> <span class="rowhint">map ›</span></td><td><span class="chip down">Downgraded Pre-Evac</span></td><td>Re-entry card or ID + proof needed.</td></tr>
-            <tr data-zone="9" tabindex="0"><td><b>Huerfano Co. via Colorado City</b> <span class="rowhint">map ›</span></td><td><span class="chip pre">Pre-Evac</span></td><td>West of I-25.</td></tr>
-            <tr data-zone="10" tabindex="0"><td><b>Florence (town)</b> <span class="rowhint">map ›</span></td><td><span class="chip down">Not evacuated</span></td><td>Hosting evacuees at Pathfinder Park. Smoke main impact.</td></tr>
+            <tr><td><b>Pueblo and Custer Counties</b></td><td>Joint Information Center<br><a href="tel:7195834640">719&#8209;583&#8209;4640</a></td><td>Ask for current closures, evacuations, or Disaster Assistance Center information.</td></tr>
+            <tr><td><b>Huerfano County</b></td><td>County dispatch<br><a href="tel:7197381044">719&#8209;738&#8209;1044</a></td><td>Confirm your address and route before leaving.</td></tr>
+            <tr><td><b>Fremont County</b></td><td>Emergency Operations Center<br><a href="tel:7192767421">719&#8209;276&#8209;7421</a></td><td>Use county updates or call for the current status.</td></tr>
           </tbody>
         </table>
       </div>
@@ -405,11 +401,11 @@
           <a class="cta2" href="https://www.facebook.com/FremontSheriff" target="_blank" rel="noopener">Fremont County Sheriff</a>
         </div>
         <div class="card">
-          <h3>Sign up for alerts</h3>
+          <h3>Official update sources</h3>
           <ul class="clean">
-            <li><b>Pueblo:</b> CodeRED via Pueblo Sheriff site</li>
-            <li><b>Custer/Fremont/Huerfano:</b> Everbridge system for each county</li>
-            <li>Wireless Emergency Alerts hit phones automatically in danger zones</li>
+            <li><a href="https://inciweb.wildfire.gov/incident-publication/copsf-aspen-acres-fire/aspen-acres-fire-update-07-09-2026" target="_blank" rel="noopener">InciWeb July 9 incident update</a></li>
+            <li><a href="https://www.puebloemergency.info" target="_blank" rel="noopener">Pueblo Emergency</a></li>
+            <li>Wireless Emergency Alerts may reach phones in affected areas.</li>
           </ul>
         </div>
       </div>
@@ -418,11 +414,11 @@
 
   <section id="feed-sec" data-anchor="update-feed">
     <div class="wrap">
-      <h2>Live Updates &amp; Verified Posts</h2>
-      <div class="h2sub">Space for official bulletins and X posts. Add your own via the API hook.</div>
+      <h2>Official Updates</h2>
+      <div class="h2sub">This static page does not auto-ingest public posts. Open the official sources below for current updates.</div>
       <div class="grid2">
         <div id="feedList">
-          <div class="feed-empty" id="feedEmpty">Live feed ready — official updates and verified posts will appear here.</div>
+          <div class="feed-empty" id="feedEmpty">No live feed is embedded. Use InciWeb, county emergency pages, and Watch Duty to confirm current conditions.</div>
         </div>
         <div class="card">
           <h3>Use updates safely</h3>
@@ -438,15 +434,17 @@
 
   <section id="weather" data-anchor="weather-panel">
     <div class="wrap">
-      <h2>Wind &amp; Weather at the Fire</h2>
+      <h2>Weather, Smoke &amp; Closures</h2>
       <div class="grid2">
         <div class="card">
-          <h3>Alerts</h3>
-          <div id="alerts"><p class="loading">Weather module placeholder ready.</p></div>
+          <h3>Current weather and smoke</h3>
+          <p class="mini">The July 9 update warned of storms, outflow winds, and flash-flood potential. Check the current forecast and smoke conditions before travel.</p>
+          <a class="cta2" href="https://fire.airnow.gov/" target="_blank" rel="noopener">Open AirNow Fire &amp; Smoke Map</a>
         </div>
         <div class="card">
-          <h3>Forecast — Wet Mountains area</h3>
-          <div id="wxForecast"><p class="loading">Forecast module placeholder ready.</p></div>
+          <h3>Roads and closures</h3>
+          <p class="mini">Road conditions and incident closures can change quickly. Verify them immediately before driving.</p>
+          <a class="cta2" href="https://www.cotrip.org" target="_blank" rel="noopener">Open CoTrip road conditions</a>
         </div>
       </div>
     </div>
@@ -457,20 +455,19 @@
       <h2>Shelters &amp; Help</h2>
       <div class="grid2">
         <div class="card">
-          <h3>Evacuation centers</h3>
+          <h3>Find current shelter and aid information</h3>
           <ul class="clean">
-            <li><b>Pueblo:</b> 1650 Cooper Place (YMCA also free)</li>
-            <li><b>Westcliffe:</b> Lange Hall</li>
-            <li><b>Florence:</b> Pathfinder Park — people + animals</li>
-            <li><b>Large animals:</b> CO State Fairgrounds, Pueblo</li>
+            <li>Call the Joint Information Center at <a href="tel:7195834640">719&#8209;583&#8209;4640</a> for Pueblo and Custer County assistance information.</li>
+            <li>Ask whether a shelter accepts pets, mobility equipment, or large animals before traveling.</li>
+            <li>Call ahead to confirm hours, capacity, and accessibility.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>Evacuee meetings (Tue July 7)</h3>
+          <h3>When you need help leaving</h3>
           <ul class="clean">
-            <li><b>6 p.m.</b> — Custer County HS, Westcliffe (Lake Isabel / Hwy 165 corridor)</li>
-            <li><b>7 p.m.</b> — Custer County HS (Aspen Acres subdivision)</li>
-            <li>Grief counselors on site. Re-entry requires card or ID + proof of residency.</li>
+            <li>Tell dispatch or the Joint Information Center if transportation, medication, oxygen, or mobility support is needed.</li>
+            <li>Bring identification, medications, assistive devices, and pet supplies if directed to leave.</li>
+            <li>Do not rely on a prior meeting or shelter location without current confirmation.</li>
           </ul>
         </div>
       </div>
@@ -550,7 +547,7 @@
       document.documentElement.dataset.theme=t;
       const btn=document.getElementById('themeBtn');
       if(btn) btn.textContent=t==='dusk' ? '☀️ Light' : '🌙 Dark';
-      store.set('aat-theme',t);
+      store.set('aat-theme-v2',t);
       applyTiles();
     }
 
@@ -569,7 +566,7 @@
       if(fsBtn) fsBtn.addEventListener('click',()=>{fsIdx=(fsIdx+1)%3;applyFs();});
 
       applyFs();
-      setTheme(store.get('aat-theme')||'dusk');
+      setTheme(store.get('aat-theme-v2')||'dawn');
     }
 
     function showFallback(){
@@ -598,14 +595,14 @@
         };
         mapLayers=layers;
 
-        L.marker([37.985,-105.055]).bindPopup('<b>Fire origin</b><br>June 29 near Aspen Acres Campground').addTo(layers.live);
+        L.marker([38.04,-105.09]).bindPopup('<b>Incident reference point</b><br>Official July 9 update places the fire about 10 miles northwest of Rye.').addTo(layers.live);
 
         const towns=[
-          ['Florence',38.3903,-105.1189,'Not evacuated — hosting evacuees at Pathfinder Park'],
-          ['Pueblo',38.2544,-104.6091,'Evac center at 1650 Cooper Place'],
-          ['Beulah',38.0781,-104.9878,'Under evacuation order'],
-          ['Rye',37.9214,-104.9317,'Under evacuation order'],
-          ['Colorado City',37.9447,-104.8365,'Downgraded to pre-evac']
+          ['Florence',38.3903,-105.1189,'Community reference location'],
+          ['Pueblo',38.2544,-104.6091,'Community reference location'],
+          ['Beulah',38.0781,-104.9878,'Community reference location'],
+          ['Rye',37.9214,-104.9317,'Community reference location'],
+          ['Colorado City',37.9447,-104.8365,'Community reference location']
         ];
 
         towns.forEach(([n,la,lo,txt])=>{
@@ -650,16 +647,15 @@
         }).bindPopup('<b>San Isabel National Forest area</b><br>Approximate footprint for orientation.').addTo(layers.forest);
 
         const places=[
-          ['Pueblo Evacuation Center (Cooper Place YMCA)',38.2544,-104.6091,'Shelter','People shelter / check-in support'],
-          ['Westcliffe Evac Center (Lange Hall)',38.1347,-105.4658,'Shelter','Community evacuation center'],
-          ['Pathfinder Park, Florence',38.3914,-105.1225,'Shelter','People + animal evacuation support'],
-          ['CO State Fairgrounds (Large animals)',38.2714,-104.6067,'Animal shelter','Large animal intake support'],
-          ['St Thomas More Hospital, Cañon City',38.4447,-105.2280,'Medical','Nearest major medical support'],
-          ['Pueblo Community Food Distribution',38.2652,-104.6088,'Food','Food and basic supplies (verify hours)'],
-          ['Florence groceries / supplies area',38.3928,-105.1181,'Food','Local grocery and supply access'],
-          ['Fuel services near Colorado City',37.9469,-104.8369,'Fuel','Fuel and road-stop services']
+          ['Pueblo reference location',38.2544,-104.6091,'Community','Verify current services before traveling'],
+          ['Westcliffe reference location',38.1347,-105.4658,'Community','Verify current services before traveling'],
+          ['Florence reference location',38.3914,-105.1225,'Community','Verify current services before traveling'],
+          ['Cañon City reference location',38.4447,-105.2280,'Medical','Verify current availability before traveling'],
+          ['Pueblo reference location',38.2652,-104.6088,'Supplies','Verify current availability before traveling'],
+          ['Florence reference location',38.3928,-105.1181,'Supplies','Verify current availability before traveling'],
+          ['Colorado City reference location',37.9469,-104.8369,'Services','Verify current availability before traveling']
         ];
-        const placeColors={Shelter:'#8E44AD','Animal shelter':'#7D3C98',Medical:'#C0392B',Food:'#D68910',Fuel:'#2874A6'};
+        const placeColors={Community:'#8E44AD',Medical:'#C0392B',Supplies:'#D68910',Services:'#2874A6'};
         places.forEach(([name,lat,lng,kind,note])=>{
           const color=placeColors[kind]||'#8E44AD';
           L.circleMarker([lat,lng],{
@@ -673,23 +669,19 @@
           ).addTo(layers.places);
         });
 
-        const zoneStyles={
-          order:{color:'#C0392B',fillColor:'#C0392B',fillOpacity:.22},
-          pre:{color:'#D9A62E',fillColor:'#D9A62E',fillOpacity:.2},
-          down:{color:'#3A9160',fillColor:'#3A9160',fillOpacity:.18}
-        };
+        const zoneStyles={reference:{color:'#6FA8FF',fillColor:'#6FA8FF',fillOpacity:.1}};
         const zoneCircles=[
-          ['Beulah','Evac Order',0,'order'],
-          ['Rye','Evac Order',1,'order'],
-          ['San Isabel / Lake Isabel','Evac Order',2,'order'],
-          ['Wetmore','Evac Order',3,'order'],
-          ['Aspen Acres / Konn Rd','Evac Order',4,'order'],
-          ['Red Creek / North Creek','Evac Order',5,'order'],
-          ['Williamsburg','Evac Order',6,'order'],
-          ['Hwy 67 south of Florence','Evac Order',7,'order'],
-          ['Colorado City (west I-25)','Downgraded Pre-Evac',8,'down'],
-          ['Huerfano Co. via Colorado City','Pre-Evac',9,'pre'],
-          ['Florence (town)','Not evacuated',10,'down']
+          ['Beulah','Verify current status',0,'reference'],
+          ['Rye','Verify current status',1,'reference'],
+          ['San Isabel / Lake Isabel','Verify current status',2,'reference'],
+          ['Wetmore','Verify current status',3,'reference'],
+          ['Aspen Acres / Konn Rd','Verify current status',4,'reference'],
+          ['Red Creek / North Creek','Verify current status',5,'reference'],
+          ['Williamsburg','Verify current status',6,'reference'],
+          ['Hwy 67 south of Florence','Verify current status',7,'reference'],
+          ['Colorado City (west I-25)','Verify current status',8,'reference'],
+          ['Huerfano County reference area','Verify current status',9,'reference'],
+          ['Florence (town)','Verify current status',10,'reference']
         ];
         zoneCircles.forEach(([name,status,idx,kind])=>{
           const style=zoneStyles[kind];
@@ -713,22 +705,6 @@
         console.warn('Map init failed',e);
         showFallback();
       }
-    }
-
-    function initTimeline(){
-      const progression=[
-        {d:'June 29 · ~23k acres · 0% contained'},
-        {d:'July 1 · ~45k acres · 0%'},
-        {d:'July 3 · ~66k acres · 0%'},
-        {d:'July 5 · ~89k acres · 14%'},
-        {d:'July 7 · ~93.9k acres · 16% contained'}
-      ];
-      const tl=document.getElementById('tl');
-      const tlDate=document.getElementById('tlDate');
-      if(!tl || !tlDate) return;
-      const render=(i)=>tlDate.textContent=progression[i].d;
-      tl.addEventListener('input',e=>render(+e.target.value));
-      render(4);
     }
 
     function initEvacRows(){
@@ -864,7 +840,6 @@
       initMap();
       initLayerToggles();
       initMapFocusButtons();
-      initTimeline();
       initEvacRows();
       initAddress();
       initShare();
