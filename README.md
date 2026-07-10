@@ -1,7 +1,17 @@
-# aspen-acres-fire-tracker
-Interactive fire map
+# Aspen Acres Fire Tracker
 
-## Deploy to Vercel
+Community-first, mobile-friendly wildfire information page for Southern Colorado.
 
-This repository is ready for static deployment on Vercel.
-The app entrypoint is `/index.html`.
+## Deploy
+This is a static site.
+- Entry file: `index.html`
+- Deploy target: Vercel (no framework required)
+
+## Safety Notice
+This page aggregates public information and is **not** an official emergency alert system.  
+For life-safety decisions, follow county sheriff alerts, official evacuation orders, and Watch Duty.
+
+## Suggested official sources
+- https://app.watchduty.org
+- https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire
+- https://www.pueblosheriff.com
