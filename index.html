@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dusk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <meta name="description" content="Live map, evacuation status, wind and resources for the Aspen Acres Fire in Southern Colorado. Mobile-friendly community tracker." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Reference map, evacuation guidance, weather resources, and help information for the Aspen Acres Fire in Southern Colorado. Mobile-friendly community tracker.">
   <title>Aspen Acres Fire — Southern Colorado Community Tracker</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script>
 
   <style>
@@ -35,11 +35,11 @@
       font-size:1rem; line-height:1.6; transition:background .25s,color .25s;
     }
     a{ color:var(--link); text-underline-offset:3px; }
-    .wrap{ max-width:1100px; margin:0 auto; padding:0 16px; }
+    .wrap{ max-width:1240px; margin:0 auto; padding:0 12px; }
     :focus-visible{ outline:3px solid var(--contain); outline-offset:2px; border-radius:4px; }
     @media (prefers-reduced-motion:reduce){ *{ transition:none!important; animation:none!important; } html{ scroll-behavior:auto; } }
 
-    header{ border-bottom:1px solid var(--line); padding:20px 0 16px; background:var(--panel); }
+    header{ border-bottom:1px solid var(--line); padding:14px 0 12px; background:var(--panel); }
     .topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
     .kicker{ letter-spacing:.16em; font-size:.72rem; font-weight:700; color:var(--fire); text-transform:uppercase; }
     h1{ font-size:clamp(1.7rem,5vw,2.5rem); line-height:1.08; font-weight:700; margin:4px 0 6px; }
@@ -50,32 +50,33 @@
       font-size:.9rem; font-weight:700; padding:10px 14px; cursor:pointer; min-height:44px; box-shadow:var(--shadow);
     }
     .ctrl:hover{ border-color:var(--ink-faint); }
+    .ctrl-text-large{ font-size:1.15em; }
     .stamp{ display:inline-block; margin-top:8px; padding:5px 12px; border:1px solid var(--line); border-radius:999px; font-size:.78rem; color:var(--warn); background:var(--panel2); }
     .livechip{ display:inline-block; margin-top:8px; margin-left:6px; padding:5px 12px; border-radius:999px; font-size:.78rem; background:var(--ok-bg); color:var(--ok); border:1px solid var(--chipline); }
     .livechip .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--ok); margin-right:6px; animation:pulse 1.6s infinite; }
     @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
 
     nav{ position:sticky; top:0; z-index:1000; background:var(--panel); border-bottom:2px solid var(--line); box-shadow:var(--shadow); }
-    nav .wrap{ display:flex; gap:2px; overflow-x:auto; padding:6px 16px; -webkit-overflow-scrolling:touch; }
+    nav .wrap{ display:flex; gap:2px; overflow-x:auto; padding:4px 12px; -webkit-overflow-scrolling:touch; }
     nav a{
       white-space:nowrap; color:var(--ink-dim); text-decoration:none; font-size:.86rem; font-weight:700;
       padding:11px 14px; border-radius:9px; min-height:44px; display:flex; align-items:center;
     }
     nav a:hover, nav a:focus{ background:var(--panel2); color:var(--ink); }
 
-    section{ padding:28px 0 8px; }
+    section{ padding:18px 0 6px; }
     h2{ font-size:1.35rem; font-weight:700; margin-bottom:4px; }
     .h2sub{ color:var(--ink-faint); font-size:.88rem; margin-bottom:14px; max-width:720px; }
 
-    .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:10px; margin:14px 0 4px; }
-    .stat{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; box-shadow:var(--shadow); }
-    .stat .n{ font-size:1.5rem; font-weight:700; letter-spacing:-.01em; }
-    .stat .l{ font-size:.7rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.07em; margin-top:2px; font-weight:700; }
+    .stats{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:10px 0 2px; }
+    .stat{ background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:8px 10px; box-shadow:var(--shadow); }
+    .stat .n{ font-size:1.2rem; font-weight:700; letter-spacing:-.01em; line-height:1.1; }
+    .stat .l{ font-size:.63rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.07em; margin-top:2px; font-weight:700; line-height:1.2; }
     .stat.fire .n{ color:var(--fire); } .stat.contain .n{ color:var(--contain); } .stat.evac .n{ color:var(--evac); }
 
-    #map{ height:58vh; min-height:380px; border-radius:var(--radius); border:2px solid var(--line); background:var(--panel2); box-shadow:var(--shadow); display:block; }
+    #map{ height:50vh; min-height:320px; border-radius:var(--radius); border:2px solid var(--line); background:var(--panel2); box-shadow:var(--shadow); display:block; }
     #map-fallback{ display:none; border-radius:var(--radius); border:2px solid var(--line); box-shadow:var(--shadow); overflow:hidden; margin-top:12px; }
-    #map-fallback img{ width:100%; height:auto; display:block; }
+    .map-fallback-panel{ padding:20px; background:var(--panel); }
     .mapbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
     .toggle{
       display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line); border-radius:999px;
@@ -84,8 +85,15 @@
     .toggle input{ accent-color:var(--fire); width:18px; height:18px; cursor:pointer; }
     .toggle.on{ color:var(--ink); border-color:var(--ink-faint); }
     .mapbtns{ display:flex; gap:8px; margin-left:auto; }
+    .compact-options{ margin-top:8px; border:1px solid var(--line); border-radius:10px; background:var(--panel); }
+    .compact-options summary{ cursor:pointer; padding:10px 12px; font-size:.84rem; font-weight:700; color:var(--ink-dim); }
+    .compact-options[open] summary{ border-bottom:1px solid var(--line); color:var(--ink); }
+    .compact-options .inside{ padding:10px 12px; }
+    .mapbar-flat{ margin:0; }
+    .map-fallback-note{ text-align:center; margin:8px; }
+    .quick-grid-spaced{ margin-top:8px; }
 
-    .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px 18px; margin-top:10px; box-shadow:var(--shadow); }
+    .timeline{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:11px 14px; margin-top:8px; box-shadow:var(--shadow); }
     .timeline label{ font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700; }
     .timeline .tl-date{ font-size:1.05rem; font-weight:700; color:var(--fire); margin:2px 0 6px; }
     .timeline input[type=range]{ width:100%; accent-color:var(--fire); height:34px; cursor:pointer; }
@@ -93,12 +101,38 @@
     .legend{ display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:.8rem; color:var(--ink-dim); font-weight:600; }
     .legend span{ display:flex; align-items:center; gap:6px; }
     .sw{ width:15px; height:15px; border-radius:4px; display:inline-block; border:1px solid var(--chipline); }
+    .sw-reference{ background:none; border:3px solid #E0451F; }
+    .sw-order{ background:#C0392B; opacity:.55; }
+    .sw-pre{ background:#D9A62E; opacity:.6; }
+    .sw-down{ background:#3A9160; opacity:.6; }
+    .sw-roads{ background:none; border:3px dashed #6FA8FF; }
+    .sw-forest{ background:#3E8C6B; opacity:.35; }
+    .sw-help{ background:#8E44AD; opacity:.55; }
     .note{ font-size:.8rem; color:var(--ink-faint); margin-top:8px; }
 
-    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .grid2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:10px; }
     @media (max-width:760px){ .grid2{ grid-template-columns:1fr; } }
-    .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; margin-bottom:12px; box-shadow:var(--shadow); }
+    .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-bottom:10px; box-shadow:var(--shadow); }
     .card h3{ font-size:.98rem; font-weight:700; margin-bottom:8px; }
+    .map-layout{ display:grid; grid-template-columns:minmax(0,1.95fr) minmax(280px,1fr); gap:10px; align-items:start; }
+    .map-side{ position:sticky; top:72px; }
+    .quick-grid{ display:grid; grid-template-columns:1fr; gap:8px; }
+    .mini{ font-size:.8rem; color:var(--ink-dim); }
+    .focus-list{ display:grid; gap:6px; margin-top:8px; }
+    .focus-btn{
+      width:100%; text-align:left; background:var(--panel2); border:1px solid var(--line); color:var(--ink);
+      border-radius:10px; padding:9px 10px; font:inherit; font-size:.82rem; font-weight:700; cursor:pointer;
+    }
+    .focus-btn:hover{ border-color:var(--ink-faint); }
+    .kpi-row{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:8px; }
+    .kpi{ background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+    .kpi .n{ font-weight:700; font-size:1rem; line-height:1.1; }
+    .kpi .l{ font-size:.64rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; font-weight:700; }
+    .std{ background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:9px 10px; margin-top:8px; }
+    .std h4{ font-size:.76rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); margin-bottom:6px; }
+    .std ol{ margin:0 0 0 18px; padding:0; }
+    .std li{ margin:0 0 4px; font-size:.8rem; color:var(--ink-dim); }
+    .std .pass{ margin-top:6px; font-size:.72rem; color:var(--contain); font-weight:700; }
 
     .chip{ display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; border:1px solid var(--chipline); }
     .chip.order{ background:var(--evac-bg); color:var(--evac); }
@@ -107,7 +141,7 @@
 
     table{ width:100%; border-collapse:collapse; font-size:.88rem; }
     th{ text-align:left; font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); padding:7px 9px; border-bottom:2px solid var(--line); }
-    td{ padding:10px 9px; border-bottom:1px solid var(--line); vertical-align:top; }
+    td{ padding:8px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
     tr:last-child td{ border-bottom:none; }
     #evacTable tbody tr{ cursor:pointer; }
     #evacTable tbody tr:hover, #evacTable tbody tr:focus-visible{ background:var(--panel2); }
@@ -140,24 +174,44 @@
     ul.check li::before{ content:"✓"; background:none; color:var(--contain); font-weight:700; top:6px; left:2px; width:auto; height:auto; }
 
     input[type=text]{ font-family:inherit; }
-    footer{ border-top:1px solid var(--line); margin-top:32px; padding:22px 0 40px; color:var(--ink-faint); font-size:.78rem; background:var(--panel); }
+    .address-row{ display:flex; gap:8px; flex-wrap:wrap; }
+    .address-input{ flex:1; min-width:220px; background:var(--panel2); border:1px solid var(--line); border-radius:10px; color:var(--ink); font-size:1rem; padding:14px 16px; }
+    .address-button{ background:var(--fire); color:#fff; border:none; font-size:.95rem; padding:14px 22px; }
+    .address-output{ margin-top:12px; }
+    .address-result-label{ font-weight:700; margin-bottom:8px; }
+    .important-note{ margin-top:10px; }
+    .important-note b{ color:var(--warn); }
+    .table-card{ overflow-x:auto; }
+    footer{ border-top:1px solid var(--line); margin-top:20px; padding:16px 0 26px; color:var(--ink-faint); font-size:.78rem; background:var(--panel); }
     footer p{ margin-bottom:6px; }
     .disc{ background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); padding:13px 15px; margin-bottom:14px; font-size:.82rem; color:var(--ink-dim); }
-    .share{ background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; margin-top:12px; }
+    .share{ background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-top:10px; }
     .share h3{ margin-bottom:5px; }
     .share p{ font-size:.86rem; color:var(--ink-dim); }
+    .share-button{ width:100%; cursor:pointer; font-family:inherit; }
 
     .leaflet-popup-content-wrapper, .leaflet-popup-tip{ background:var(--panel); color:var(--ink); }
     .leaflet-popup-content{ font-size:.82rem; line-height:1.45; font-family:"Atkinson Hyperlegible",sans-serif; }
     .leaflet-container a{ color:var(--link); }
+    .town-label{
+      background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px;
+      padding:2px 6px; font-size:.7rem; font-weight:700; white-space:nowrap; box-shadow:var(--shadow);
+    }
+    .place-chip{ display:inline-block; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:2px 7px; border-radius:999px; border:1px solid var(--chipline); margin-bottom:4px; }
 
     @media (max-width: 600px){
       html{ font-size:17px; }
       h1{ font-size:1.9rem; }
-      #map{ height:52vh; min-height:320px; }
-      .stats{ grid-template-columns:repeat(2,1fr); }
+      #map{ height:45vh; min-height:280px; }
+      .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .kpi-row{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .map-layout{ grid-template-columns:1fr; }
+      .map-side{ position:static; }
       .grid2{ grid-template-columns:1fr; }
       nav a{ padding:10px 12px; font-size:.82rem; }
+    }
+    @media (min-width: 601px) and (max-width: 980px){
+      .stats{ grid-template-columns:repeat(3,minmax(0,1fr)); }
     }
   </style>
 </head>
@@ -171,12 +225,12 @@
           <div class="sub">Community tracker for the largest active wildfire in Colorado — burning in the Wet Mountains west of I-25.</div>
         </div>
         <div class="ctrls" role="group" aria-label="Display settings">
-          <button class="ctrl" id="themeBtn" aria-label="Switch theme">☀️ Light</button>
-          <button class="ctrl" id="fsBtn" aria-label="Text size">A<span style="font-size:1.15em">A</span></button>
+          <button class="ctrl" id="themeBtn" type="button" aria-label="Switch theme">☀️ Light</button>
+          <button class="ctrl" id="fsBtn" type="button" aria-label="Text size">A<span class="ctrl-text-large">A</span></button>
         </div>
       </div>
-      <span class="stamp">Community version • July 7, 2026 • Updated live</span>
-      <span class="livechip" id="liveChip"><span class="dot"></span>Fetching live data…</span>
+      <span class="stamp">Community reference • July 7, 2026</span>
+      <span class="livechip" id="liveChip"><span class="dot"></span>Check official sources for changes</span>
     </div>
   </header>
 
@@ -203,68 +257,129 @@
     </div>
   </div>
 
-  <section id="map-sec">
+  <section id="map-sec" data-anchor="map-command-center">
     <div class="wrap">
       <h2>Fire Map &amp; Zones</h2>
-      <div class="h2sub">Red outline = official perimeter reference. Tap zones or table rows. If interactive map fails, a static fallback appears.</div>
+      <div class="h2sub">Reference map for orientation. Tap zones or table rows, then confirm official boundaries before acting. If the interactive map fails, a static fallback appears.</div>
+      <div class="map-layout">
+        <div>
+          <div id="map" role="application" aria-label="Interactive Leaflet map of Aspen Acres Fire"></div>
 
-      <div id="map" role="application" aria-label="Interactive Leaflet map of Aspen Acres Fire"></div>
+          <div id="map-fallback">
+            <div class="map-fallback-panel">
+              <h3>Interactive reference map unavailable</h3>
+              <p class="note">This community map could not load. Confirm current evacuation boundaries and road conditions through official sources before acting.</p>
+              <a class="cta2" href="https://app.watchduty.org" target="_blank" rel="noopener">Open Watch Duty</a>
+            </div>
+          </div>
 
-      <div id="map-fallback">
-        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200" alt="Static map fallback placeholder for Aspen Acres Fire area" />
-        <p class="note" style="text-align:center;margin:8px;">Static fallback shown. For official live evacuation boundaries, open Watch Duty.</p>
+          <div class="mapbar" id="toggles">
+            <label class="toggle on"><input type="checkbox" checked data-layer="live"> Fire reference</label>
+            <label class="toggle on"><input type="checkbox" checked data-layer="zones"> Evac zones</label>
+            <label class="toggle on"><input type="checkbox" checked data-layer="places"> Shelters &amp; help</label>
+          </div>
+          <details class="compact-options">
+            <summary>More map layers and location tools</summary>
+            <div class="inside">
+              <div class="mapbar mapbar-flat">
+                <label class="toggle on"><input type="checkbox" checked data-layer="towns"> Towns</label>
+                <label class="toggle on"><input type="checkbox" checked data-layer="roads"> Roads</label>
+                <label class="toggle on"><input type="checkbox" checked data-layer="forest"> Forest area</label>
+                <span class="mapbtns">
+                  <button class="ctrl" id="recenterBtn" type="button">⌖ Recenter</button>
+                  <button class="ctrl" id="locateBtn" type="button">📍 My location</button>
+                </span>
+              </div>
+            </div>
+          </details>
+
+          <div class="timeline">
+            <label for="tl">Fire growth timeline — drag to scrub history</label>
+            <div class="tl-date" id="tlDate"></div>
+            <input type="range" id="tl" min="0" max="4" value="4" step="1" aria-label="Fire progression">
+            <div class="tl-ticks"><span>Jun 29</span><span>Jul 1</span><span>Jul 3</span><span>Jul 5</span><span>Jul 7</span></div>
+          </div>
+
+          <div class="legend">
+            <span><span class="sw sw-reference"></span> Fire reference</span>
+            <span><span class="sw sw-order"></span> Evac order</span>
+            <span><span class="sw sw-pre"></span> Pre-evac</span>
+            <span><span class="sw sw-down"></span> Downgraded</span>
+            <span><span class="sw sw-roads"></span> Key roads</span>
+            <span><span class="sw sw-forest"></span> National forest (approx)</span>
+            <span><span class="sw sw-help"></span> Shelters &amp; food/help</span>
+          </div>
+          <p class="note">Zones are schematic for quick reference. For parcel-level boundaries, verify with official county maps or Watch Duty.</p>
+        </div>
+        <aside class="card map-side" aria-label="At-a-glance response panel" data-anchor="response-standard-panel">
+          <h3>At-a-glance action panel</h3>
+          <p class="mini">Use this first: confirm zone status, pick route, then check shelters and supplies.</p>
+          <div class="kpi-row">
+            <div class="kpi"><div class="n">Order</div><div class="l">Leave now if in zone</div></div>
+            <div class="kpi"><div class="n">Pre-Evac</div><div class="l">Pack and prep to move</div></div>
+            <div class="kpi"><div class="n">Downgraded</div><div class="l">Monitor for changes</div></div>
+          </div>
+          <div class="quick-grid quick-grid-spaced">
+            <a class="big-cta" href="https://app.watchduty.org" target="_blank" rel="noopener">Open Watch Duty now →</a>
+            <a class="cta2" href="https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire" target="_blank" rel="noopener">Official InciWeb page</a>
+            <a class="cta2" href="https://www.cotrip.org" target="_blank" rel="noopener">Road closures (CoTrip)</a>
+          </div>
+          <details class="compact-options">
+            <summary>Choose a map focus</summary>
+            <div class="inside focus-list">
+              <button class="focus-btn" type="button" data-focus="38.2544,-104.6091,11.4">Pueblo shelter + city services</button>
+              <button class="focus-btn" type="button" data-focus="38.3903,-105.1189,12">Florence shelters + supply area</button>
+              <button class="focus-btn" type="button" data-focus="37.9447,-104.8365,11.7">Colorado City routes + fuel</button>
+              <button class="focus-btn" type="button" data-focus="38.1347,-105.4658,11">Westcliffe evac center</button>
+              <button class="focus-btn" type="button" data-focus="38.02,-104.99,9.5">Reset to fire overview</button>
+            </div>
+          </details>
+          <div class="std" data-anchor="operational-standard-v1">
+            <h4>Operational standard v1</h4>
+            <ol>
+              <li><b>Confirm zone:</b> Watch Duty or sheriff source first.</li>
+              <li><b>Pick route:</b> Check CoTrip closures before driving.</li>
+              <li><b>Choose destination:</b> Shelter, family, or safe waypoint.</li>
+              <li><b>Check neighbors:</b> prioritize seniors and mobility-limited households.</li>
+            </ol>
+            <div class="pass">Completion condition: Source checked + route checked + destination chosen.</div>
+          </div>
+        </aside>
       </div>
-
-      <div class="mapbar" id="toggles">
-        <label class="toggle on"><input type="checkbox" checked data-layer="live" /> Live perimeter</label>
-        <label class="toggle on"><input type="checkbox" checked data-layer="zones" /> Evac zones</label>
-        <label class="toggle on"><input type="checkbox" checked data-layer="towns" /> Towns</label>
-        <span class="mapbtns">
-          <button class="ctrl" id="recenterBtn" type="button">⌖ Recenter</button>
-          <button class="ctrl" id="locateBtn" type="button">📍 My location</button>
-        </span>
-      </div>
-
-      <div class="timeline">
-        <label for="tl">Fire growth timeline — drag to scrub history</label>
-        <div class="tl-date" id="tlDate"></div>
-        <input type="range" id="tl" min="0" max="4" value="4" step="1" aria-label="Fire progression" />
-        <div class="tl-ticks"><span>Jun 29</span><span>Jul 1</span><span>Jul 3</span><span>Jul 5</span><span>Jul 7</span></div>
-      </div>
-
-      <div class="legend">
-        <span><span class="sw" style="background:none;border:3px solid #E0451F"></span> Live perimeter</span>
-        <span><span class="sw" style="background:#C0392B;opacity:.55"></span> Evac order</span>
-        <span><span class="sw" style="background:#D9A62E;opacity:.6"></span> Pre-evac</span>
-        <span><span class="sw" style="background:#3A9160;opacity:.6"></span> Downgraded</span>
-      </div>
-      <p class="note">Zones are schematic for quick reference. For parcel-level boundaries, verify with official county maps or Watch Duty.</p>
-
-      <a class="big-cta" href="https://app.watchduty.org" target="_blank" rel="noopener">Open Watch Duty — live official zones &amp; alerts →</a>
-      <a class="cta2" href="https://inciweb.wildfire.gov/incident-information/copsf-aspen-acres-fire" target="_blank" rel="noopener">Official InciWeb page</a>
     </div>
   </section>
 
-  <section id="check">
+  <section id="check" data-anchor="address-check">
     <div class="wrap">
       <h2>Check Your Address</h2>
       <div class="h2sub">Type any address. It pins the location and shows distance guidance. Always verify evacuation zone in Watch Duty.</div>
-      <div class="card">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input id="addrIn" type="text" inputmode="text" autocomplete="street-address" placeholder="e.g. 1312 W 3rd St, Florence, CO" aria-label="Address to check" style="flex:1;min-width:220px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:1rem;padding:14px 16px" />
-          <button id="addrBtn" class="ctrl" type="button" style="background:var(--fire);color:#fff;border:none;font-size:.95rem;padding:14px 22px">Check location</button>
+      <div class="grid2">
+        <div class="card">
+          <div class="address-row">
+            <input id="addrIn" class="address-input" type="text" inputmode="text" autocomplete="address-line1" placeholder="e.g. 1312 W 3rd St, Florence, CO" aria-label="Address to check">
+            <button id="addrBtn" class="ctrl address-button" type="button">Check location</button>
+          </div>
+          <div id="addrOut" class="address-output"></div>
+          <p class="note important-note"><b>Important:</b> This shows location guidance only. It does <b>not</b> replace sheriff evacuation orders.</p>
         </div>
-        <div id="addrOut" style="margin-top:12px"></div>
-        <p class="note" style="margin-top:10px"><b style="color:var(--warn)">Important:</b> This shows location guidance only. It does <b>not</b> replace sheriff evacuation orders.</p>
+        <div class="card">
+          <h3>How to decide quickly</h3>
+          <ul class="clean check">
+            <li>Check your address in Watch Duty first</li>
+            <li>If your zone is <b>Order</b>, leave immediately</li>
+            <li>If <b>Pre-Evac</b>, stage go-bag + vehicle now</li>
+            <li>Confirm road conditions on CoTrip before driving</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="evac">
+  <section id="evac" data-anchor="evac-grid">
     <div class="wrap">
       <h2>Evacuation Status by Area</h2>
       <div class="h2sub">Tap any row to focus the map. Orders can change quickly.</div>
-      <div class="card" style="overflow-x:auto">
+      <div class="card table-card">
         <table id="evacTable">
           <thead><tr><th>Area</th><th>Status</th><th>Notes</th></tr></thead>
           <tbody>
@@ -301,28 +416,43 @@
     </div>
   </section>
 
-  <section id="feed-sec">
+  <section id="feed-sec" data-anchor="update-feed">
     <div class="wrap">
       <h2>Live Updates &amp; Verified Posts</h2>
       <div class="h2sub">Space for official bulletins and X posts. Add your own via the API hook.</div>
-      <div id="feedList">
-        <div class="feed-empty" id="feedEmpty">Live feed ready — official updates and verified posts will appear here.</div>
+      <div class="grid2">
+        <div id="feedList">
+          <div class="feed-empty" id="feedEmpty">Live feed ready — official updates and verified posts will appear here.</div>
+        </div>
+        <div class="card">
+          <h3>Use updates safely</h3>
+          <ul class="clean">
+            <li>Prioritize county sheriff and official incident channels</li>
+            <li>Cross-check major claims before sharing</li>
+            <li>Route/closure updates can change quickly</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="weather">
+  <section id="weather" data-anchor="weather-panel">
     <div class="wrap">
       <h2>Wind &amp; Weather at the Fire</h2>
-      <div id="alerts"><p class="loading">Weather module placeholder ready.</p></div>
-      <div class="card">
-        <h3>Forecast — Wet Mountains area</h3>
-        <div id="wxForecast"><p class="loading">Forecast module placeholder ready.</p></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Alerts</h3>
+          <div id="alerts"><p class="loading">Weather module placeholder ready.</p></div>
+        </div>
+        <div class="card">
+          <h3>Forecast — Wet Mountains area</h3>
+          <div id="wxForecast"><p class="loading">Forecast module placeholder ready.</p></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="help">
+  <section id="help" data-anchor="help-panel">
     <div class="wrap">
       <h2>Shelters &amp; Help</h2>
       <div class="grid2">
@@ -347,7 +477,7 @@
     </div>
   </section>
 
-  <section id="prep">
+  <section id="prep" data-anchor="preparedness-panel">
     <div class="wrap">
       <h2>Be Ready — Especially for Older Adults &amp; Seniors</h2>
       <div class="grid2">
@@ -375,7 +505,7 @@
       <div class="share">
         <h3>Share this page</h3>
         <p>Easy to share with neighbors or print as a QR flyer for community centers.</p>
-        <button id="shareBtn" class="cta2" type="button" style="width:100%;cursor:pointer;font-family:inherit">Copy link or share</button>
+        <button id="shareBtn" class="cta2 share-button" type="button">Copy link or share</button>
       </div>
     </div>
   </section>
@@ -390,8 +520,21 @@
 
   <script>
     const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-    let map=null, tileLayer=null, mapInitialized=false;
+    let map=null, tileLayer=null, mapInitialized=false, mapLayers=null;
     const FIRE_CENTER=[38.02,-104.99];
+    const ZONE_POINTS=[
+      [38.0781,-104.9878], // Beulah
+      [37.9214,-104.9317], // Rye
+      [37.9968,-105.0563], // San Isabel / Lake Isabel
+      [38.2367,-105.0856], // Wetmore
+      [37.9950,-105.0400], // Aspen Acres / Konn Rd
+      [38.0550,-105.0500], // Red Creek / North Creek
+      [38.2830,-105.0400], // Williamsburg
+      [38.3020,-105.0000], // Hwy 67 south of Florence
+      [37.9447,-104.8365], // Colorado City west I-25
+      [37.9300,-104.8600], // Huerfano Co. via Colorado City
+      [38.3903,-105.1189]  // Florence (town)
+    ];
 
     function applyTiles(){
       if(!map) return;
@@ -448,8 +591,12 @@
         const layers={
           live:L.layerGroup().addTo(map),
           zones:L.layerGroup().addTo(map),
-          towns:L.layerGroup().addTo(map)
+          towns:L.layerGroup().addTo(map),
+          roads:L.layerGroup().addTo(map),
+          forest:L.layerGroup().addTo(map),
+          places:L.layerGroup().addTo(map)
         };
+        mapLayers=layers;
 
         L.marker([37.985,-105.055]).bindPopup('<b>Fire origin</b><br>June 29 near Aspen Acres Campground').addTo(layers.live);
 
@@ -464,6 +611,91 @@
         towns.forEach(([n,la,lo,txt])=>{
           L.circleMarker([la,lo],{radius:5,color:'#fff',weight:2,fillColor:'#2A78C4',fillOpacity:.9})
             .bindPopup(`<b>${n}</b><br>${txt}`).addTo(layers.towns);
+          L.marker([la,lo],{
+            icon:L.divIcon({
+              className:'',
+              html:`<span class="town-label">${n}</span>`,
+              iconSize:[80,20],
+              iconAnchor:[40,-6]
+            })
+          }).addTo(layers.towns);
+        });
+
+        const roads=[
+          ['I-25 corridor',[[37.87,-104.83],[38.02,-104.81],[38.17,-104.77],[38.28,-104.67],[38.43,-104.63]]],
+          ['CO-96',[[38.05,-105.08],[38.13,-105.01],[38.23,-104.93],[38.33,-104.88],[38.39,-105.12]]],
+          ['CO-165',[[37.88,-104.86],[37.95,-104.91],[38.03,-104.98],[38.08,-105.02]]],
+          ['CO-67',[[38.10,-105.02],[38.21,-105.01],[38.31,-104.99],[38.39,-105.12]]],
+          ['CO-78',[[37.90,-104.85],[37.94,-104.90],[38.00,-104.98]]],
+          ['US-50 to Pueblo',[[38.28,-104.93],[38.28,-104.82],[38.27,-104.68],[38.26,-104.61]]]
+        ];
+        roads.forEach(([name,coords])=>{
+          L.polyline(coords,{
+            color:'#6FA8FF',
+            weight:3,
+            opacity:.85,
+            dashArray:'8,6'
+          }).bindPopup(`<b>${name}</b><br>Major travel route (verify closures on CoTrip).`).addTo(layers.roads);
+        });
+
+        const forestPolygon=[
+          [38.34,-105.37],[38.29,-105.23],[38.25,-105.11],[38.15,-105.02],[38.03,-105.01],
+          [37.94,-105.06],[37.90,-105.16],[37.92,-105.29],[38.03,-105.41],[38.16,-105.45],[38.29,-105.42]
+        ];
+        L.polygon(forestPolygon,{
+          color:'#3E8C6B',
+          weight:2,
+          fillColor:'#3E8C6B',
+          fillOpacity:.24
+        }).bindPopup('<b>San Isabel National Forest area</b><br>Approximate footprint for orientation.').addTo(layers.forest);
+
+        const places=[
+          ['Pueblo Evacuation Center (Cooper Place YMCA)',38.2544,-104.6091,'Shelter','People shelter / check-in support'],
+          ['Westcliffe Evac Center (Lange Hall)',38.1347,-105.4658,'Shelter','Community evacuation center'],
+          ['Pathfinder Park, Florence',38.3914,-105.1225,'Shelter','People + animal evacuation support'],
+          ['CO State Fairgrounds (Large animals)',38.2714,-104.6067,'Animal shelter','Large animal intake support'],
+          ['St Thomas More Hospital, Cañon City',38.4447,-105.2280,'Medical','Nearest major medical support'],
+          ['Pueblo Community Food Distribution',38.2652,-104.6088,'Food','Food and basic supplies (verify hours)'],
+          ['Florence groceries / supplies area',38.3928,-105.1181,'Food','Local grocery and supply access'],
+          ['Fuel services near Colorado City',37.9469,-104.8369,'Fuel','Fuel and road-stop services']
+        ];
+        const placeColors={Shelter:'#8E44AD','Animal shelter':'#7D3C98',Medical:'#C0392B',Food:'#D68910',Fuel:'#2874A6'};
+        places.forEach(([name,lat,lng,kind,note])=>{
+          const color=placeColors[kind]||'#8E44AD';
+          L.circleMarker([lat,lng],{
+            radius:6,
+            color:'#fff',
+            weight:2,
+            fillColor:color,
+            fillOpacity:.95
+          }).bindPopup(
+            `<span class="place-chip" style="background:${color};color:#fff">${kind}</span><br><b>${name}</b><br>${note}`
+          ).addTo(layers.places);
+        });
+
+        const zoneStyles={
+          order:{color:'#C0392B',fillColor:'#C0392B',fillOpacity:.22},
+          pre:{color:'#D9A62E',fillColor:'#D9A62E',fillOpacity:.2},
+          down:{color:'#3A9160',fillColor:'#3A9160',fillOpacity:.18}
+        };
+        const zoneCircles=[
+          ['Beulah','Evac Order',0,'order'],
+          ['Rye','Evac Order',1,'order'],
+          ['San Isabel / Lake Isabel','Evac Order',2,'order'],
+          ['Wetmore','Evac Order',3,'order'],
+          ['Aspen Acres / Konn Rd','Evac Order',4,'order'],
+          ['Red Creek / North Creek','Evac Order',5,'order'],
+          ['Williamsburg','Evac Order',6,'order'],
+          ['Hwy 67 south of Florence','Evac Order',7,'order'],
+          ['Colorado City (west I-25)','Downgraded Pre-Evac',8,'down'],
+          ['Huerfano Co. via Colorado City','Pre-Evac',9,'pre'],
+          ['Florence (town)','Not evacuated',10,'down']
+        ];
+        zoneCircles.forEach(([name,status,idx,kind])=>{
+          const style=zoneStyles[kind];
+          L.circle(ZONE_POINTS[idx],{radius:3400,weight:2,...style})
+            .bindPopup(`<b>${name}</b><br>${status}`)
+            .addTo(layers.zones);
         });
 
         const recenterBtn=document.getElementById('recenterBtn');
@@ -503,10 +735,48 @@
       document.querySelectorAll('#evacTable tbody tr').forEach(tr=>{
         const go=()=>{
           document.getElementById('map-sec')?.scrollIntoView({behavior:'smooth'});
-          setTimeout(()=>{ if(map) map.setView([38.1,-105.0],10); },400);
+          setTimeout(()=>{
+            if(!map) return;
+            const idx=Number(tr.dataset.zone);
+            const point=Number.isFinite(idx) ? (ZONE_POINTS[idx]||FIRE_CENTER) : FIRE_CENTER;
+            map.setView(point,10.8);
+          },400);
         };
         tr.addEventListener('click',go);
         tr.addEventListener('keydown',e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); go(); } });
+      });
+    }
+
+    function initLayerToggles(){
+      document.querySelectorAll('#toggles input[data-layer]').forEach(input=>{
+        const label=input.closest('.toggle');
+        const layerName=input.dataset.layer;
+        const sync=()=>{
+          if(label) label.classList.toggle('on',input.checked);
+          if(!map || !mapLayers || !layerName || !mapLayers[layerName]) return;
+          const layer=mapLayers[layerName];
+          if(input.checked){
+            if(!map.hasLayer(layer)) map.addLayer(layer);
+          }else if(map.hasLayer(layer)){
+            map.removeLayer(layer);
+          }
+        };
+        input.addEventListener('change',sync);
+        sync();
+      });
+    }
+
+    function initMapFocusButtons(){
+      document.querySelectorAll('button[data-focus]').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          if(!map) return;
+          const raw=btn.dataset.focus || '';
+          const [latS,lngS,zoomS]=raw.split(',');
+          const lat=Number(latS), lng=Number(lngS), zoom=Number(zoomS||11);
+          if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+          document.getElementById('map-sec')?.scrollIntoView({behavior:'smooth'});
+          setTimeout(()=>map.setView([lat,lng],Number.isFinite(zoom)?zoom:11),220);
+        });
       });
     }
 
@@ -521,8 +791,8 @@
         const j=await r.json();
         if(!j.length){ out.innerHTML='<p>Couldn’t find that address. Try adding town name.</p>'; return; }
         const lat=+j[0].lat, lng=+j[0].lon;
-        const label=j[0].display_name.split(',').slice(0,3).join(',');
-        out.innerHTML=`<p style="font-weight:700;margin-bottom:8px">📍 ${label}</p><div class="card"><p>Location found. Use Watch Duty to confirm exact evacuation status for this address.</p></div><a class="cta2" href="https://app.watchduty.org" target="_blank" rel="noopener">Confirm your evacuation zone →</a>`;
+        const label=escapeHtml(j[0].display_name.split(',').slice(0,3).join(','));
+        out.innerHTML=`<p class="address-result-label">📍 ${label}</p><div class="card"><p>Location found. Use Watch Duty to confirm exact evacuation status for this address.</p></div><a class="cta2" href="https://app.watchduty.org" target="_blank" rel="noopener">Confirm your evacuation zone →</a>`;
         if(map) map.setView([lat,lng],11);
       }catch(e){
         out.innerHTML='<p>Lookup failed — try again or use Watch Duty directly.</p>';
@@ -551,9 +821,22 @@
     function initLiveChip(){
       const chip=document.getElementById('liveChip');
       if(!chip) return;
-      setTimeout(()=>{
-        chip.innerHTML='<span class="dot"></span>Loaded • '+new Date().toLocaleTimeString();
-      },1200);
+      chip.setAttribute('title','This site does not provide live emergency alerts. Verify current conditions with official sources.');
+    }
+
+    function escapeHtml(value){
+      return String(value).replace(/[&<>"']/g,char=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      })[char]);
+    }
+
+    function safeExternalUrl(value){
+      try{
+        const url=new URL(value);
+        return url.protocol==='https:' || url.protocol==='http:' ? url.href : '';
+      }catch(e){
+        return '';
+      }
     }
 
     window.TrackerAPI={
@@ -564,7 +847,13 @@
         const list=document.getElementById('feedList'); if(!list) return null;
         const div=document.createElement('div');
         div.className='feed-item'+(verified?' verified':'');
-        div.innerHTML=`<div class="fi-top"><span class="fi-src">${source||'Update'}</span>${handle?`<span class="fi-handle">${handle}</span>`:''}${time?`<span class="fi-time">${time}</span>`:''}</div><div class="fi-text">${text||''}${link?` <a href="${link}" target="_blank" rel="noopener">source →</a>`:''}</div>`;
+        const sourceText=escapeHtml(source||'Update');
+        const handleText=handle ? `<span class="fi-handle">${escapeHtml(handle)}</span>` : '';
+        const timeText=time ? `<span class="fi-time">${escapeHtml(time)}</span>` : '';
+        const bodyText=escapeHtml(text||'');
+        const safeLink=safeExternalUrl(link);
+        const linkMarkup=safeLink ? ` <a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener">source →</a>` : '';
+        div.innerHTML=`<div class="fi-top"><span class="fi-src">${sourceText}</span>${handleText}${timeText}</div><div class="fi-text">${bodyText}${linkMarkup}</div>`;
         list.prepend(div);
         return div;
       }
@@ -573,6 +862,8 @@
     function init(){
       initThemeAndText();
       initMap();
+      initLayerToggles();
+      initMapFocusButtons();
       initTimeline();
       initEvacRows();
       initAddress();
